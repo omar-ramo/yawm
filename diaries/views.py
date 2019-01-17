@@ -127,7 +127,7 @@ class CommentCreateView(LoginRequiredMixin, View):
 		return redirect(diary)
 
 	def post(self, *args, **kwargs):
-		diary = get_object_or_404(Diary, slug=self.kwargs['diary_slug'])
+		diary = get_object_or_404(Diary, slug=self.kwargs['diary_slug'], is_visible=True, is_commentable=True)
 		comment_form = CommentForm(self.request.POST)
 		if comment_form.is_valid():
 			new_comment = comment_form.save(commit=False)

@@ -96,7 +96,7 @@
 		<div>
 			{% for comment in diary.comments.all %}
 			<div class="media mt-3 jumbotron p-1 mt-1">
-				<img src="{% if profile.image %}{{ profile.image.url }}{% else %}{% static 'img/default_person_image.png' %}{% endif%}" class="img-fluid rounded-circle author-metadata-image mt-2">
+				<img src="{% if comment.author.image %}{{ comment.author.image.url }}{% else %}{% static 'img/default_person_image.png' %}{% endif%}" class="img-fluid rounded-circle author-metadata-image mt-2">
 				<div class="media-body ml-2">
 					<h4 class="d-inline-block mr-3">{{ comment.author }}</h4>
 					<small class="d-inline-block mr-3">{{ comment.created_on|timesince }} ago</small>
@@ -111,16 +111,20 @@
 			{% endfor %}
 		<!-- Comment Section Ends -->
 		<!-- Comment Form Section Begins -->
-		{% if request.user.is_authenticated %}
-		<div class="mb-4">
-			<form method="post" action="{% url 'diaries:comment_create' diary.slug %}">
-				{% csrf_token %}
-				{% include 'core/snippets/form_fields.html' with form=comment_form %}
-				<button type="submit" class="btn btn-success btn-block">Comment</button>
-			</form>
-		</div>
+		{% if diary.is_commentable %}
+			{% if request.user.is_authenticated %}
+			<div class="mb-4">
+				<form method="post" action="{% url 'diaries:comment_create' diary.slug %}">
+					{% csrf_token %}
+					{% include 'core/snippets/form_fields.html' with form=comment_form %}
+					<button type="submit" class="btn btn-success btn-block">Comment</button>
+				</form>
+			</div>
+			{% else %}
+			<p>Please <a href="{% url 'accounts:login' %}?next={{ request.path }}">login</a> to comment.</p>
+			{% endif %}
 		{% else %}
-		<p>Please <a href="{% url 'accounts:login' %}?next={{ request.path }}">login</a> to comment.</p>
+			<p>Comments are disabled for this diary.</p>
 		{% endif %}
 		<!-- Comment Form Section Ends -->
 	{% endblock %}

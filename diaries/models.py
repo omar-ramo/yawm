@@ -9,6 +9,10 @@ from core.utils import get_image_upload_path, generate_random_string
 
 
 class DiaryManager(models.Manager):
+	def get_queryset(self, *args, **kwargs):
+		qs = super().get_queryset(*args, **kwargs)
+		return qs.filter(is_visible=True)
+
 	def with_likes_and_comments_count(self):
 		qs = super().get_queryset()
 		qs = qs.annotate(
