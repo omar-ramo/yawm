@@ -1,0 +1,21 @@
+{% extends 'accounts/base_accounts.html' %}
+{% load crispy_forms_tags %}
+{% block title %}Login - {{block.super}}{% endblock %}
+
+{% block stylesheet %}
+	{{block.super}}
+{% endblock %}
+
+{% block content %}
+	<h2>Login:</h2>
+	<form method="post" action="{% url 'accounts:login' %}">
+		{% csrf_token %}
+		{{ form|crispy }}
+		<input type="submit" value="login"  class="btn btn-block btn-success"/>
+		<input type="hidden" name="next" value="{{ next }}" />
+	</form>
+{% endblock %}
+
+{% block javascript %}
+	{{block.super}}
+{% endblock %}

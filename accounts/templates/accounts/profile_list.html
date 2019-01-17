@@ -1,0 +1,8 @@
+{% extends 'accounts/base_accounts.html' %}
+
+{% block title %}{{ title }} - {{block.super}}{% endblock %}
+
+{% block content %}
+	<h2>{{ title }}:</h2>
+	{% include 'accounts/snippets/profile_snippet.html' with profiles=profiles %}
+{% endblock %}

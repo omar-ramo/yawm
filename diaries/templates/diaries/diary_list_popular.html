@@ -1,0 +1,11 @@
+{% extends 'diaries/base_diaries.html' %}
+{% load static %}
+
+{% block title %}Popular Diaries - {{block.super}}{% endblock %}
+
+{% block head %}{{block.super}}{% endblock %}
+
+{% block content %}
+	<h3>Popular Diaries:</h3>
+	{% include 'diaries/snippets/diary_list_snippet.html' with diaries=diaries %}
+{% endblock %}

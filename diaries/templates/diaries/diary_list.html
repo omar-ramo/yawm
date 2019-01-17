@@ -1,0 +1,11 @@
+{% extends 'diaries/base_diaries.html' %}
+{% load static %}
+
+{% block title %}Recent Diaries From Your Circle - {{block.super}}{% endblock %}
+
+{% block head %}{{block.super}}{% endblock %}
+
+{% block content %}
+	<h3>Recent Diaries From Your Circle:</h3>
+	{% include 'diaries/snippets/diary_list_snippet.html' with diaries=diaries %}
+{% endblock %}

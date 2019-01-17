@@ -1,0 +1,126 @@
+{% extends 'diaries/base_diaries.html' %}
+{% load static %}
+
+{% block title %}{{ diary.title }} - {{block.super}}{% endblock %}
+
+{% block head %}{{block.super}}{% endblock %}
+
+	{% block content %}
+		<div>
+			{% if request.user.profile == diary.author %}
+			{% endif %}
+			{% if diary.image %}
+			<div>
+				<img src="{{ diary.image.url }}" class="img-fluid mx-auto d-block">
+			</div>
+			{% endif %}
+			<p class="float-right mt-2">
+				<a href="{% url 'diaries:diary_update' diary.slug %}" class="btn btn-info">
+					edit <span class="oi" data-glyph="pencil" title="pencil" aria-hidden="true"></span>
+				</a>
+				<a href="{% url 'diaries:diary_delete' diary.slug %}" class="btn btn-danger">
+					delete <span class="oi" data-glyph="trash" title="trash" aria-hidden="true"></span>
+				</a>
+			</p>
+			<h1 class="text-center">{{ diary.title }}</h1>
+			<div class="row">
+				<div class="col-sm-10">
+					<div class="media">
+						<a href="{{ diary.author.get_absolute_url }}">
+							<img src="{% if diary.author.image %} {{ diary.author.image.url }} {% else %}{% static 'img/default_person_image.png' %}{% endif %}" class="img-fluid rounded-circle author-metadata-image d-block mt-2">
+						</a>
+							<div class="media-body ml-2">
+								<h3>
+									<a href="{{ diary.author.get_absolute_url }}">{{ diary.author }}</a>
+									<small class="text-secondary">({{ diary.get_feeling_display }})</small>
+								</h3>
+								<p>Published <b>{{ diary.created_on|timesince }}</b> ago | On: <b>{{ diary.created_on|date:'DATE_FORMAT' }}</b></p>
+							</div>
+					</div>
+				</div>
+				<div class="col-sm-2">
+					<div class="dropdown">
+						<button class="btn btn-body dropdown-toggle" data-toggle="dropdown">Share <span class="oi" data-glyph="share" title="share" aria-hidden="true"></span></button>
+						<div class="dropdown-menu">
+							<div class="dropdown-header">Share this diary</div>
+							<a href="#!" class="dropdown-item">facebook</a>
+							<a href="#!" class="dropdown-item">twitter</a>
+							<a href="#!" class="dropdown-item">g+</a>
+						</div>
+					</div>
+				</div>
+			</div>
+			<br>
+			<div>
+				{{ diary.content|safe }}
+			</div>
+		</div>
+		<br>
+		<div class="row">
+			<div class="col text-center offset-s3">
+				<span>
+					<form action="{% url 'diaries:diary_like' diary.slug %}" method="post" id="like-form">
+						{% csrf_token %}
+						<button type="submit" class="btn btn-body">
+						{% if request.user.profile in diary.likes.all %}
+							<span class="oi text-danger" data-glyph="heart" title="heart" aria-hidden="true"></span>
+						{% else %}
+							<span class="oi" data-glyph="heart" title="heart" aria-hidden="true"></span>
+						{% endif %}
+							 ({{ diary.likes_count }})
+						</button>
+					</form>
+				</span>
+						
+			</div>
+			<div class="col text-center">
+				<span class="ml-5">
+					<span class="oi" data-glyph="comment-square" title="comment square" aria-hidden="true"></span>
+					({{ diary.comments_count }})
+				</span>
+			</div>
+			<div class="col text-center">
+				<div class="dropdown">
+					<button class="btn btn-body dropdown-toggle" data-toggle="dropdown">Share</button>
+					<div class="dropdown-menu">
+						<div class="dropdown-header">Share this diary</div>
+						<a href="#!" class="dropdown-item">facebook</a>
+						<a href="#!" class="dropdown-item">twitter</a>
+						<a href="#!" class="dropdown-item">g+</a>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- Comment Section Begins -->
+		<h3>Comments:</h3>
+		<div>
+			{% for comment in diary.comments.all %}
+			<div class="media mt-3 jumbotron p-1 mt-1">
+				<img src="{% if profile.image %}{{ profile.image.url }}{% else %}{% static 'img/default_person_image.png' %}{% endif%}" class="img-fluid rounded-circle author-metadata-image mt-2">
+				<div class="media-body ml-2">
+					<h4 class="d-inline-block mr-3">{{ comment.author }}</h4>
+					<small class="d-inline-block mr-3">{{ comment.created_on|timesince }} ago</small>
+					{% if request.user.profile == comment.author %}
+					<span class="right">
+						<a href="{% url 'diaries:comment_delete' diary.slug comment.id %}">delete <span class="oi" data-glyph="trash" title="trash" aria-hidden="true"></span></a>
+					</span>
+					{% endif %}
+					<p>{{ comment.content|linebreaksbr }}</p>
+				</div>
+			</div>
+			{% endfor %}
+		<!-- Comment Section Ends -->
+		<!-- Comment Form Section Begins -->
+		{% if request.user.is_authenticated %}
+		<div class="mb-4">
+			<form method="post" action="{% url 'diaries:comment_create' diary.slug %}">
+				{% csrf_token %}
+				{% include 'core/snippets/form_fields.html' with form=comment_form %}
+				<button type="submit" class="btn btn-success btn-block">Comment</button>
+			</form>
+		</div>
+		{% else %}
+		<p>Please <a href="{% url 'accounts:login' %}?next={{ request.path }}">login</a> to comment.</p>
+		{% endif %}
+		<!-- Comment Form Section Ends -->
+	{% endblock %}

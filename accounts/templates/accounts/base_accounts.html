@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{block.super}}{% endblock %}
+
+
+{% block stylesheet %}
+	{{block.super}}
+	<link rel="stylesheet" type="text/css" href="{% static 'core/css/main.css' %}">
+{% endblock %}
+
+{% block body %}
+	{{block.super}}
+	<div class="container">
+		{% block content %}{% endblock %}
+	</div>
+{% endblock %}
+
+{% block javascript %}
+	{{block.super}}
+	<link rel="stylesheet" type="text/css" href="{% static 'core/css/main.css' %}">
+{% endblock %}

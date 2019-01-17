@@ -1,0 +1,17 @@
+{% extends 'diaries/base_diaries.html' %}
+
+{% block title %}Update diary - {{block.super}}{% endblock %}
+
+{% block head %}{{block.super}}{% endblock %}
+
+	{% block content %}
+		<div>
+			<h2>Update a diary</h2>
+			<h3>{{ diary.title }}</h3>
+			<form method="post" action="{% url 'diaries:diary_update' diary.slug %}" enctype="multipart/form-data">
+				{% csrf_token %}
+				{% include 'core/snippets/form_fields.html' with form=form %}
+				<button type="submit">Update</button>
+			</form>
+		</div>
+	{% endblock %}

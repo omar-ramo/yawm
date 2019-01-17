@@ -1,0 +1,14 @@
+.card.diary-metadata{
+	height: 50px;
+}
+.diary-metadata-content{
+	padding: 0 0 0 5px !important;
+}
+
+img.author-metadata-image{
+	height: 50px !important;
+	width: 50px !important;
+}
+/*div.diary-item div.card{
+	height: 681px !important;
+}*/

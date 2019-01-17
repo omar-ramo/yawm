@@ -1,0 +1,18 @@
+{% extends 'diaries/base_diaries.html' %}
+{% block title %}Create a new diary - {{block.super}}{% endblock %}
+	{% block stylesheet %}
+		{{ block.super }}
+	{% endblock %}
+	{% block content %}
+		<div>
+			<h2>Create a new diary:</h2>
+			<form method="post" action="{% url 'diaries:diary_create' %}" enctype="multipart/form-data" class="browser-default">
+				{% csrf_token %}
+				{% include 'core/snippets/form_fields.html' with form=form %}
+				<button type="submit" class="btn btn-block btn-success">Create</button>
+			</form>
+		</div>
+	{% endblock %}
+	{% block javascript %}
+		{{ block.super }}
+	{% endblock %}

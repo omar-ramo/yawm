@@ -1,0 +1,36 @@
+{% extends 'accounts/base_accounts.html' %}
+{% load static %}
+
+{% block title %}{{ profile.name }} - {{block.super}}{% endblock %}
+
+{% block content %}
+<div class="row">
+	<div class="col-md-12 text-center">
+		<img src="{% if profile.image %}{{ profile.image.url }}{% else %}{% static 'img/default_person_image.png' %}{% endif%}" class="img-fluid rounded-circle" style="height: 120px !important; width: 120px !important;">
+		<h3>{{ profile.name }}</h3>
+		<p>Diaries: {{ profile.written_diaries_count }}</p>
+		<p>Followers: {{ profile.followers_count }}</p>
+	</div>
+</div>
+<div class="row">
+	{% if request.user.is_authenticated %}
+	<div class="col-md-12 text-center">
+		<form method="post" action="{% url 'accounts:profile_follow' profile.user.username %}">
+			{% csrf_token %}
+				{% if request.user.profile != profile %}
+					{% if request.user.profile in profile.followers.all %}
+						<button class="btn btn-dark">Unfollow</button>
+					{% else %}
+						<button class="btn btn-success">Follow</button>
+					{% endif %}
+				{% endif %}
+		</form>
+	</div>
+	<div class="col-md-12 text-center my-3">
+		<a href="{% url 'accounts:profile_list' %}?type=following&username={{ profile.user.username }}" class="btn btn-info">Following</a>
+		<a href="{% url 'accounts:profile_list' %}?type=followers&username={{ profile.user.username }}" class="btn btn-info">Followers</a>
+	</div>
+	{% endif %}
+</div>
+	{% include 'diaries/snippets/diary_list_snippet.html' with diaries=diaries %}
+{% endblock %}

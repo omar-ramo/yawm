@@ -1,0 +1,21 @@
+{% extends 'diaries/base_diaries.html' %}
+
+{% block title %}Delete diary - {{block.super}}{% endblock %}
+
+{% block head %}{{block.super}}{% endblock %}
+
+	{% block content %}
+		<div>
+			<h2>Are sure you want to delete this diary</h2>
+			{% if diary.image %}
+				<img src="{{ diary.image.url }}" class="img-fluid" style="max-height: 400px;">
+			{% endif %}
+			<h3>{{ diary.title }}</h3>
+			<form method="post" action="{% url 'diaries:diary_delete' diary.slug %}">
+				{% csrf_token %}
+				{{ form.as_p }}
+				<button type="submit" class="btn btn-danger">Delete</button>
+			</form>
+				<a href="{% url 'diaries:diary_detail' diary.slug %}"><button class="btn btn-success mt-2">Cancel</button></a>
+		</div>
+	{% endblock %}

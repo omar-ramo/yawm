@@ -1,0 +1,94 @@
+{% load static %}
+<div class="row">
+	{% for diary in diaries %}
+		<div class="col-md-4 diary-item mt-4">
+			<div class="card-panel">
+				<!-- Diary Metadat Start -->
+				<div class="media">
+					<a href="{{ diary.author.get_absolute_url }}">
+						<img src="{% if diary.author.image %}{{ diary.author.image.url }}{% else %}{% static 'img/default_person_image.png' %}{% endif%}" class="img-fluid rounded-circle author-metadata-image mt-2">
+					</a>
+					<div class="media-body ml-2">
+							<a href="{{ diary.author.get_absolute_url }}">
+								<h5 class="d-inline-block">{{ diary.author }}</h5>
+							</a>
+							<div class="dropdown d-inline-block float-right">
+								<button class="btn dropdown-toggle float-left" data-toggle="dropdown">Share  <span class="oi" data-glyph="share" title="share" aria-hidden="true"></span></button>
+								<div class="dropdown-menu">
+									<div class="dropdown-header">Share this diary</div>
+									<a href="#!" class="dropdown-item">facebook</a>
+									<a href="#!" class="dropdown-item">twitter</a>
+									<a href="#!" class="dropdown-item">g+</a>
+								</div>
+							</div>
+							<p>Published <b>{{ diary.created_on|timesince }}</b> ago</p>
+					</div>
+				</div>
+				<!-- Diary Metadat End -->
+
+				<!-- Diary Start -->
+				<div class="card">
+					{% if diary.image %}
+					<div class="card-image">
+						<a href="{{ diary.get_absolute_url }}">
+							<img src="{{ diary.image.url }}" class="img-fluid">
+						</a>
+					</div>
+					{% endif %}
+					<div class="card-body">
+						<a href="{{ diary.get_absolute_url }}">
+							<h4 class="card-title">{{ diary.title|truncatechars:'120' }}</h4>
+						</a>
+						<p class="card-text">{{ diary.content|striptags|truncatechars:'120' }}</p>
+					</div>
+					<div class="card-footer">
+						<span class="mr-5">
+							<form action="{% url 'diaries:diary_like' diary.slug %}" method="post" id="like-form" style="display: inline-block;" >
+								{% csrf_token %}
+								<button type="submit" class="btn btn-body">
+								{% if request.user.profile in diary.likes.all %}
+									<span class="oi text-danger" data-glyph="heart" title="heart" aria-hidden="true"></span>
+								{% else %}
+									<span class="oi" data-glyph="heart" title="heart" aria-hidden="true"></span>
+								{% endif %}
+									 ({{ diary.likes_count }})
+								</button>
+							</form>
+						</span>
+						<span class="ml-5">
+							<span class="oi" data-glyph="comment-square" title="comment square" aria-hidden="true"></span>
+							({{ diary.comments_count }})
+						</span>
+					</div>
+				</div>
+				<!-- Diary End -->
+			</div>
+		</div>
+		{% if forloop.counter|divisibleby:'3' %}
+		</div><div class="row">
+		{% endif %}
+	{% empty %}
+		<p>No one is home, come back later.</p>
+	{% endfor %}
+</div>
+<div class="row">
+	<!-- Pagination Start -->
+	<div class="col-md-12">
+		{% if is_paginated %}
+			<ul class="pagination justify-content-center">
+				<li class=" page-item {% if not page_obj.has_previous %}disabled{% endif %}">
+					<a {% if page_obj.has_previous %}href="?page={{ page_obj.previous_page_number }}"{% endif %} class="page-link">&lt;</a>
+				</li>
+				{% for page in page_obj.paginator.page_range %}
+					<li  class="page-item {% if page == page_obj.number %}active{% endif %}">
+						<a href="?page={{ page }}" class="page-link">{{ page }}</a>
+					</li>
+				{% endfor %}
+				<li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
+					<a {% if page_obj.has_next %}href="?page={{ page_obj.next_page_number }}"{% endif %} class="page-link">&gt;</a>
+				</li>
+			</ul>
+		{% endif %}
+	</div>
+	<!-- Pagination End -->
+</div>
