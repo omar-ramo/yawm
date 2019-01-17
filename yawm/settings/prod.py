@@ -7,9 +7,9 @@ SECRET_KEY = config('SECRET_KEY')
 
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '[::1]', '.herokuapp.com']
 
-MIDDLEWARE += 'django.contrib.sessions.middleware.SessionMiddleware'
+MIDDLEWARE += 'whitenoise.middleware.WhiteNoiseMiddleware',
 
 DATABASES = {
     'default': dj_database_url.config(
