@@ -99,7 +99,6 @@ class Diary(models.Model):
 				new_slug = '{}-{}'.format(slugify(self.title), generate_random_string())
 			self.slug = new_slug
 		self.description = ' '.join(self.content[:255].split(' ')[:-1])
-		print(self.description)
 		return super(Diary, self).save(*args, **kwargs)
 
 	def get_absolute_url(self):
