@@ -61,11 +61,23 @@ class Diary(models.Model):
 	HAPPY_FEELING = '1'
 	EXCITED_FEELING = '2'
 	SAD_FEELING = '3'
+	LOVE_FEELING = 'LOVE'
+	SATISFIED_FEELING = 'SATISFIED'
+	MAD_FEELING = 'MAD'
+	TIRED_FEELING = 'TIRED'
+	SURPRISED_FEELING = 'SURPRISED'
+	AFRAID_FEELING = 'AFRAID'
 	FEELINGS_CHOICES = (
 		(ANGRY_FEELING, 'Angry'),
 		(HAPPY_FEELING, 'Happy'),
 		(EXCITED_FEELING, 'Excited'),
 		(SAD_FEELING, 'Sad'),
+		(LOVE_FEELING, 'Love'),
+		(SATISFIED_FEELING, 'Satisfied'),
+		(MAD_FEELING, 'Mad'),
+		(TIRED_FEELING, 'Tired'),
+		(SURPRISED_FEELING, 'Surprised'),
+		(AFRAID_FEELING, 'Afraid'),
 		)
 	title = models.CharField(max_length=255)
 	# Size of slug is bigger than size of title
