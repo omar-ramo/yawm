@@ -1,5 +1,5 @@
 from django.db import models
-from django.db.models import Count, F
+from django.db.models import Count, F, Q
 from django.utils.text import slugify
 from django.urls import reverse
 from ckeditor_uploader.fields import RichTextUploadingField
@@ -8,23 +8,25 @@ from accounts.models import Profile
 from core.utils import get_image_upload_path, generate_random_string
 
 
-class DiaryManager(models.Manager):
-	def get_queryset(self, *args, **kwargs):
-		qs = super().get_queryset(*args, **kwargs)
-		return qs.filter(is_visible=True)
+class DiaryQuerySet(models.QuerySet):
 
 	def with_likes_and_comments_count(self):
-		qs = super().get_queryset()
-		qs = qs.annotate(
+		qs = self.annotate(
 			likes_count=Count(F('likes'), distinct=True),
 			comments_count=Count(F('comments'), distinct=True)
 			)
 		return qs
 
+	def active(self, user=None):
+		if not user or not user.is_authenticated:
+			return self.filter(is_visible=Diary.ALL_CHOICE)
+		else:
+			# User can see his non-visible diaries.
+			return self.filter(Q(author=user.profile) | Q(is_visible=Diary.ALL_CHOICE))
+
 	def from_followed_profiles(self, profile):
-		qs = super().get_queryset()
 		followed_profiles = profile.followed_profiles.all()
-		qs = qs.filter(author__in=followed_profiles)
+		qs = self.filter(author__in=followed_profiles)
 		qs = qs.annotate(
 			likes_count=Count(F('likes'), distinct=True),
 			comments_count=Count(F('comments'), distinct=True)
@@ -32,11 +34,7 @@ class DiaryManager(models.Manager):
 		return qs
 
 	def popular(self):
-		qs = super().get_queryset()
-		qs = qs.annotate(
-			likes_count=Count(F('likes'), distinct=True),
-			comments_count=Count(F('comments'), distinct=True)
-			).annotate(
+		qs = self.with_likes_and_comments_count().annotate(
 				ranking_factor=F('comments_count')
 								+ F('likes_count')
 								# I can't get it to work.
@@ -76,16 +74,16 @@ class Diary(models.Model):
 	content = RichTextUploadingField()
 	description = models.CharField(max_length=255, null=True, blank=True)
 	image = models.ImageField(upload_to=get_image_upload_path, null=True, blank=True)
-	is_visible = models.CharField('Who can see this diary?', max_length=7, choices=VISIBILITY_CHOICES, default='all')
-	is_commentable = models.CharField('Who can comment on this diary?', choices=COMMENTABLE_CHOICES, max_length=7, default='all')
-	feeling = models.CharField('How do you feel?', max_length=15, choices=FEELINGS_CHOICES, null=True, blank=True)
+	is_visible = models.CharField(help_text='Who can see this diary?', max_length=7, choices=VISIBILITY_CHOICES, default=ALL_CHOICE)
+	is_commentable = models.CharField(help_text='Who can comment on this diary?', choices=COMMENTABLE_CHOICES, max_length=7, default=ALL_CHOICE)
+	feeling = models.CharField(help_text='How do you feel?', max_length=15, choices=FEELINGS_CHOICES, null=True, blank=True)
 	created_on = models.DateTimeField(auto_now_add=True)
 	updated_on = models.DateTimeField(auto_now=True)
 
 	likes = models.ManyToManyField(Profile, through='DiaryLike', through_fields=('diary', 'user'))
 	author = models.ForeignKey(Profile, related_name='written_diaries', on_delete=models.CASCADE)
 
-	objects = DiaryManager()
+	objects = DiaryQuerySet.as_manager()
 
 	class Meta:
 		verbose_name_plural = 'diaries'

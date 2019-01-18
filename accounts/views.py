@@ -17,6 +17,7 @@ class LoginView(auth_views.LoginView):
 class SignupView(CreateView):
 	form_class = UserCreationForm
 	template_name = 'accounts/signup.html'
+
 	def get_success_url(self):
 		return reverse('accounts:login')
 
@@ -77,7 +78,7 @@ class ProfileDetailView(DetailView):
 
 	def get_context_data(self, *args, **kwargs):
 		cx = super().get_context_data(*args, **kwargs)
-		cx['diaries'] = self.object.written_diaries.with_likes_and_comments_count()
+		cx['diaries'] = self.object.written_diaries.with_likes_and_comments_count().active(self.request.user)
 		return cx
 
 class ProfileFollowView(LoginRequiredMixin, View):

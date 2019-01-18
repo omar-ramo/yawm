@@ -11,7 +11,7 @@
 			<form method="post" action="{% url 'diaries:diary_update' diary.slug %}" enctype="multipart/form-data">
 				{% csrf_token %}
 				{% include 'core/snippets/form_fields.html' with form=form %}
-				<button type="submit">Update</button>
+				<button type="submit" class="btn btn-block btn-success">Update</button>
 			</form>
 		</div>
 	{% endblock %}

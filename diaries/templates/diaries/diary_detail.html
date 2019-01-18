@@ -7,7 +7,11 @@
 
 	{% block content %}
 		<div>
-			{% if request.user.profile == diary.author %}
+			{% if diary.is_visible == 'no_one' %}
+			<div class="alert alert-warning alert-dismissible">
+				No one other than you can see this diary.
+				<a class="close" data-dismiss="alert" >&times;</a>
+			</div>
 			{% endif %}
 			{% if diary.image %}
 			<div>
@@ -111,17 +115,17 @@
 			{% endfor %}
 		<!-- Comment Section Ends -->
 		<!-- Comment Form Section Begins -->
-		{% if diary.is_commentable %}
+		{% if comment_form %}
 			{% if request.user.is_authenticated %}
-			<div class="mb-4">
-				<form method="post" action="{% url 'diaries:comment_create' diary.slug %}">
-					{% csrf_token %}
-					{% include 'core/snippets/form_fields.html' with form=comment_form %}
-					<button type="submit" class="btn btn-success btn-block">Comment</button>
-				</form>
-			</div>
+				<div class="mb-4">
+					<form method="post" action="{% url 'diaries:comment_create' diary.slug %}">
+						{% csrf_token %}
+						{% include 'core/snippets/form_fields.html' with form=comment_form %}
+						<button type="submit" class="btn btn-success btn-block">Comment</button>
+					</form>
+				</div>
 			{% else %}
-			<p>Please <a href="{% url 'accounts:login' %}?next={{ request.path }}">login</a> to comment.</p>
+				<p>Please <a href="{% url 'accounts:login' %}?next={{ request.path }}">login</a> to comment.</p>
 			{% endif %}
 		{% else %}
 			<p>Comments are disabled for this diary.</p>

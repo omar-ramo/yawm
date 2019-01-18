@@ -1,7 +1,15 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404, redirect
-from django.views.generic import View, ListView, DetailView, DeleteView, UpdateView, CreateView
+from django.views.generic import (
+	View, 
+	ListView, 
+	DetailView, 
+	DeleteView, 
+	UpdateView, 
+	CreateView
+	)
 from django.urls import reverse
 
 from .forms import DiaryForm, CommentForm
@@ -26,12 +34,19 @@ class DiaryListView(ListView):
 		else:
 			if self.request.user.is_authenticated:
 				# User will only see the diaries of people he follow + his own 
-				followed_profiles_diaries = Diary.objects.from_followed_profiles(self.request.user.profile).order_by()
-				current_profile_diaries = Diary.objects.with_likes_and_comments_count().filter(author=self.request.user.profile).order_by()
-				qs = followed_profiles_diaries.union(current_profile_diaries).order_by('-created_on')
+				followed_profiles_diaries = Diary.objects\
+				.from_followed_profiles(self.request.user.profile).order_by()
+
+				current_profile_diaries = Diary.objects\
+				.with_likes_and_comments_count().filter(
+					author=self.request.user.profile
+					).order_by()
+
+				qs = followed_profiles_diaries.union(current_profile_diaries)\
+				.order_by('-created_on')
 			else:
 				qs = self.model.objects.with_likes_and_comments_count()
-		return qs
+		return qs.active(self.request.user)
 
 class DiaryDetailView(DetailView):
 	model = Diary
@@ -40,22 +55,31 @@ class DiaryDetailView(DetailView):
 	slug_field = 'slug'
 	slug_url_kwarg = 'diary_slug'
 
-	def get_queryset(self):
+	def get_object(self):
 		qs = self.model.objects.with_likes_and_comments_count()
-		return qs
+		if self.request.user.is_authenticated:
+			qs = qs.filter(
+				Q(author=self.request.user.profile)
+				| Q(is_visible=Diary.ALL_CHOICE),
+				slug=self.kwargs[self.slug_url_kwarg]
+				)
+		else:
+			qs = qs.filter(
+				is_visible=Diary.ALL_CHOICE, 
+				slug=self.kwargs[self.slug_url_kwarg]
+				)
+		obj = qs.first()
+		if obj == None:
+			raise Http404()
+		return obj
 
 	def get_context_data(self, **kwargs):
 		cx =  super(DiaryDetailView, self).get_context_data(**kwargs)
 
-		comment_form = CommentForm()
+		comment_form = None
+		if self.object.is_commentable == Diary.ALL_CHOICE:
+			comment_form = CommentForm()
 		cx['comment_form'] = comment_form
-
-		current_user_likes_diary = False
-		if self.request.user.is_authenticated:
-			if self.request.user.profile in self.object.likes.all():
-				current_user_likes_diary = True
-		cx['current_user_likes_diary'] = current_user_likes_diary
-		print(cx)
 
 		return cx
 
@@ -82,7 +106,10 @@ class DiaryUpdateView(LoginRequiredMixin, UpdateView):
 		return self.object.get_absolute_url()
 
 	def get_object(self):
-		obj = get_object_or_404(self.model, slug=self.kwargs[self.slug_url_kwarg])
+		obj = get_object_or_404(
+			self.model, 
+			slug=self.kwargs[self.slug_url_kwarg]
+			)
 		if self.request.user.profile == obj.author:
 			return obj
 		raise Http404()
@@ -97,7 +124,10 @@ class DiaryDeleteView(LoginRequiredMixin, DeleteView):
 		return reverse('diaries:diary_list')
 
 	def get_object(self):
-		obj = get_object_or_404(self.model, slug=self.kwargs[self.slug_url_kwarg])
+		obj = get_object_or_404(
+			self.model, 
+			slug=self.kwargs[self.slug_url_kwarg]
+			)
 		if self.request.user.profile == obj.author:
 			return obj
 		raise Http404()
@@ -108,12 +138,15 @@ class DiaryLikeView(LoginRequiredMixin, View):
 		return redirect(diary)
 
 	def post(self, request, diary_slug):
-		diary = get_object_or_404(Diary, slug=diary_slug)
-		# if request.user.profile in diary.likes.all():
-		# 	diary.likes.remove(request.user.profile)
-		# else:
-		# 	diary.likes.add(request.user.profile)
-		dl, created = DiaryLike.objects.get_or_create(diary=diary, user=request.user.profile)
+		diary = get_object_or_404(
+			Diary, 
+			slug=diary_slug, 
+			is_visible=Diary.ALL_CHOICE)
+
+		dl, created = DiaryLike.objects.get_or_create(
+			diary=diary, 
+			user=request.user.profile
+			)
 		if not created:
 			dl.delete()
 		return redirect(diary)
@@ -123,11 +156,20 @@ class CommentCreateView(LoginRequiredMixin, View):
 	form_class = CommentForm
 
 	def get(self, *args, **kwargs):
-		diary = get_object_or_404(Diary, slug=self.kwargs['diary_slug'])
+		diary = get_object_or_404(
+			Diary, 
+			slug=self.kwargs['diary_slug'], 
+			is_visible=Diary.ALL_CHOICE
+			)
 		return redirect(diary)
 
 	def post(self, *args, **kwargs):
-		diary = get_object_or_404(Diary, slug=self.kwargs['diary_slug'], is_visible=True, is_commentable=True)
+		diary = get_object_or_404(
+			Diary, 
+			slug=self.kwargs['diary_slug'], 
+			is_visible=Diary.ALL_CHOICE, 
+			is_commentable=Diary.ALL_CHOICE
+			)
 		comment_form = CommentForm(self.request.POST)
 		if comment_form.is_valid():
 			new_comment = comment_form.save(commit=False)
@@ -144,12 +186,19 @@ class CommentDeleteView(LoginRequiredMixin, DeleteView):
 	diary_slug_url_kwarg = 'diary_slug'
 	comment_id_url_kwarg = 'comment_id'
 
-	def get_success_url(self):
-		diary = get_object_or_404(Diary, slug=self.kwargs[self.diary_slug_url_kwarg])
-		return diary.get_absolute_url()
-
 	def get_object(self):
-		obj = get_object_or_404(self.model, id=self.kwargs[self.comment_id_url_kwarg])
+		obj = get_object_or_404(
+			self.model, 
+			id=self.kwargs[self.comment_id_url_kwarg], 
+			diary__is_visible=Diary.ALL_CHOICE
+			)
 		if self.request.user.profile == obj.author:
 			return obj
 		raise Http404()
+
+	def get_success_url(self):
+		diary = get_object_or_404(
+			Diary, 
+			slug=self.kwargs[self.diary_slug_url_kwarg]
+			)
+		return diary.get_absolute_url()
