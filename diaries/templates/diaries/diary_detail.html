@@ -47,9 +47,8 @@
 						<button class="btn btn-body dropdown-toggle" data-toggle="dropdown">Share <span class="oi" data-glyph="share" title="share" aria-hidden="true"></span></button>
 						<div class="dropdown-menu">
 							<div class="dropdown-header">Share this diary</div>
-							<a href="#!" class="dropdown-item">facebook</a>
+							<a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri  }}&title={{ diary.title|iriencode }}" class="dropdown-item" target="_blank" rel="nofollow">facebook</a>
 							<a href="#!" class="dropdown-item">twitter</a>
-							<a href="#!" class="dropdown-item">g+</a>
 						</div>
 					</div>
 				</div>
@@ -88,9 +87,8 @@
 					<button class="btn btn-body dropdown-toggle" data-toggle="dropdown">Share</button>
 					<div class="dropdown-menu">
 						<div class="dropdown-header">Share this diary</div>
-						<a href="#!" class="dropdown-item">facebook</a>
+						<a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri  }}&title={{ diary.title|iriencode }}" class="dropdown-item" target="_blank" rel="nofollow">facebook</a>
 						<a href="#!" class="dropdown-item">twitter</a>
-						<a href="#!" class="dropdown-item">g+</a>
 					</div>
 				</div>
 			</div>
