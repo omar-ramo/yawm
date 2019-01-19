@@ -4,12 +4,32 @@
 		"selected_items":
 		[
 			[
-				"use",
-				"user3"
+				"LO",
+				"LOVE_FEELING"
+			],
+			[
+				"pr",
+				"profile1"
 			],
 			[
 				"us",
-				"user1"
+				"user3pass"
+			],
+			[
+				"user",
+				"user3"
+			],
+			[
+				"ass",
+				"assertEqual"
+			],
+			[
+				"au",
+				"authors"
+			],
+			[
+				"use",
+				"user3"
 			],
 			[
 				"Di",
@@ -74,10 +94,6 @@
 			[
 				"mar",
 				"margin-left\tproperty"
-			],
-			[
-				"user",
-				"user__username"
 			],
 			[
 				"s",
@@ -150,10 +166,6 @@
 			[
 				"in",
 				"input\tTag"
-			],
-			[
-				"pr",
-				"progress-bar"
 			],
 			[
 				"bt",
@@ -278,10 +290,6 @@
 			[
 				"cr",
 				"create_profile_on_user_creation"
-			],
-			[
-				"au",
-				"auth_views"
 			],
 			[
 				"fi",
@@ -464,10 +472,6 @@
 				"followed_users"
 			],
 			[
-				"ass",
-				"assertQuerysetEqual"
-			],
-			[
 				"que",
 				"question_text"
 			],
@@ -510,28 +514,25 @@
 			[
 				"lo",
 				"login_required"
-			],
-			[
-				"R",
-				"RestaurantLocation"
 			]
 		]
 	},
 	"buffers":
 	[
 		{
-			"file": "/C/Users/omar/Documents/Dev/Django/locallibrary/catalog/tests/test_views.py",
+			"file": "diaries/templates/diaries/snippets/diary_list_snippet.html",
 			"settings":
 			{
-				"buffer_size": 10602,
+				"buffer_size": 3895,
+				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
 		},
 		{
-			"file": "diaries/tests/test_views.py",
+			"file": "diaries/templates/diaries/diary_detail.html",
 			"settings":
 			{
-				"buffer_size": 2944,
+				"buffer_size": 5352,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -540,24 +541,7 @@
 			"file": "diaries/models.py",
 			"settings":
 			{
-				"buffer_size": 5059,
-				"encoding": "UTF-8",
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "diaries/views.py",
-			"settings":
-			{
-				"buffer_size": 5295,
-				"line_ending": "Windows"
-			}
-		},
-		{
-			"file": "diaries/urls.py",
-			"settings":
-			{
-				"buffer_size": 1333,
+				"buffer_size": 5401,
 				"encoding": "UTF-8",
 				"line_ending": "Windows"
 			}
@@ -604,18 +588,25 @@
 		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/templates",
 		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/templates/diaries",
 		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/templates/diaries/snippets",
-		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/tests"
+		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/tests",
+		"/C/Users/omar/Documents/Dev/Django/yawm/yawm",
+		"/C/Users/omar/Documents/Dev/Django/yawm/yawm/settings"
 	],
 	"file_history":
 	[
+		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/urls.py",
+		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/views.py",
+		"/C/Users/omar/Documents/Dev/Django/yawm/README.md",
 		"/C/Users/omar/Documents/Dev/Django/yawm/.gitignore",
+		"/C/Users/omar/Documents/Dev/Django/yawm/requirements.txt",
+		"/C/Users/omar/Documents/Dev/Django/yawm/Procfile.windows",
+		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/models.py",
+		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/tests/test_views.py",
+		"/C/Users/omar/Documents/Dev/Django/locallibrary/catalog/tests/test_views.py",
 		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/templates/diaries/snippets/diary_list_snippet.html",
 		"/C/Users/omar/Documents/Dev/Django/yawm/accounts/views.py",
-		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/views.py",
-		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/models.py",
 		"/C/Users/omar/Documents/Dev/Django/locallibrary/catalog/tests/test_models.py",
 		"/C/Users/omar/Documents/Dev/Django/locallibrary/catalog/tests/test_forms.py",
-		"/C/Users/omar/Documents/Dev/Django/locallibrary/catalog/tests/test_views.py",
 		"/C/Users/omar/Documents/Dev/Django/yawm/yawm/settings/dev.py",
 		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/templates/diaries/diary_detail.html",
 		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/admin.py",
@@ -628,7 +619,6 @@
 		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/tests/__init__.py",
 		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/tests/test_forms.py",
 		"/C/Users/omar/Documents/Dev/Django/yawm/manage.py",
-		"/C/Users/omar/Documents/Dev/Django/yawm/requirements.txt",
 		"/C/Users/omar/Documents/Dev/Django/yawm/yawm/settings/prod.py",
 		"/C/Users/omar/Documents/Dev/Django/tweets/tweets/settings.py",
 		"/C/Users/omar/Documents/Dev/Django/yawm/runtime.txt",
@@ -650,7 +640,6 @@
 		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/templates/diaries/diary_list_discover.html",
 		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/templates/diaries/diary_list.html",
 		"/C/Users/omar/Documents/Dev/Django/yawm/static/css/summernote-bs4.css",
-		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/urls.py",
 		"/C/Users/omar/Documents/Dev/Django/yawm/accounts/templates/accounts/login.html",
 		"/C/Users/omar/Documents/Dev/Django/yawm/accounts/templates/accounts/signup.html",
 		"/C/Users/omar/Documents/Dev/Django/yawm/accounts/templates/accounts/profile_update.html",
@@ -732,14 +721,11 @@
 		"/C/Users/omar/Documents/Django/myaflam/main_app/templates/main_app/snippets/movie_list_snippet.html",
 		"/C/Users/omar/Documents/Django/myaflam/main_app/templates/main_app/search/actors.html",
 		"/C/Users/omar/Documents/Django/myaflam/main_app/admin.py",
-		"/C/Users/omar/Documents/Django/myaflam/Movies.csv",
-		"/C/Users/omar/Documents/Django/myaflam/Casts.csv",
-		"/C/Users/omar/Documents/Django/myaflam/shell/assign_actor_2_movies.py",
-		"/C/Users/omar/Documents/Django/myaflam/shell/add_categories_and_assign_2_movies_shell.py"
+		"/C/Users/omar/Documents/Django/myaflam/Movies.csv"
 	],
 	"find":
 	{
-		"height": 44.0
+		"height": 32.0
 	},
 	"find_in_files":
 	{
@@ -753,6 +739,17 @@
 		"case_sensitive": false,
 		"find_history":
 		[
+			"LOVE",
+			"love",
+			"<a href=\"#!\" class=\"dropdown-item\">facebook</a>",
+			"\t\t\t\t\t\t\t<a href=\"#!\" class=\"dropdown-item\">g+</a>\n",
+			"-**",
+			"*",
+			"profil",
+			"1",
+			"cls.",
+			"user",
+			"self.",
 			"user",
 			"user1",
 			"users_cycle",
@@ -869,18 +866,7 @@
 			"a class=\"nav-li",
 			" class=\"breadcrumb-link\"",
 			"page",
-			"ml-1",
-			"danger",
-			"warning",
-			"Small",
-			"small",
-			"Small",
-			"small",
-			"Small",
-			"small",
-			"1",
-			"diary.author",
-			"slugify"
+			"ml-1"
 		],
 		"highlight": true,
 		"in_selection": false,
@@ -898,64 +884,69 @@
 	"groups":
 	[
 		{
-			"selected": 1,
+			"selected": 2,
 			"sheets":
 			[
 				{
 					"buffer": 0,
-					"file": "/C/Users/omar/Documents/Dev/Django/locallibrary/catalog/tests/test_views.py",
+					"file": "diaries/templates/diaries/snippets/diary_list_snippet.html",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 10602,
+						"buffer_size": 3895,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								0,
-								0
+								1131,
+								943
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/Python/Python.sublime-syntax",
+							"syntax": "Packages/HTML/HTML.sublime-syntax",
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
 						"translation.y": 138.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 3,
+					"stack_index": 2,
 					"type": "text"
 				},
 				{
 					"buffer": 1,
-					"file": "diaries/tests/test_views.py",
+					"file": "diaries/templates/diaries/diary_detail.html",
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 2944,
+						"buffer_size": 5352,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								2944,
-								2944
+								2245,
+								2245
+							],
+							[
+								3665,
+								3665
 							]
 						],
 						"settings":
 						{
-							"syntax": "Packages/Python/Python.sublime-syntax"
+							"syntax": "Packages/HTML/HTML.sublime-syntax",
+							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1628.0,
+						"translation.y": 1031.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 0,
+					"stack_index": 1,
 					"type": "text"
 				},
 				{
@@ -964,15 +955,15 @@
 					"semi_transient": false,
 					"settings":
 					{
-						"buffer_size": 5059,
+						"buffer_size": 5401,
 						"regions":
 						{
 						},
 						"selection":
 						[
 							[
-								3474,
-								3474
+								2047,
+								2047
 							]
 						],
 						"settings":
@@ -981,69 +972,10 @@
 							"translate_tabs_to_spaces": false
 						},
 						"translation.x": 0.0,
-						"translation.y": 1863.0,
+						"translation.y": 1380.0,
 						"zoom_level": 1.0
 					},
-					"stack_index": 2,
-					"type": "text"
-				},
-				{
-					"buffer": 3,
-					"file": "diaries/views.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 5295,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								732,
-								732
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"translate_tabs_to_spaces": false
-						},
-						"translation.x": 0.0,
-						"translation.y": 138.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 1,
-					"type": "text"
-				},
-				{
-					"buffer": 4,
-					"file": "diaries/urls.py",
-					"semi_transient": false,
-					"settings":
-					{
-						"buffer_size": 1333,
-						"regions":
-						{
-						},
-						"selection":
-						[
-							[
-								0,
-								0
-							]
-						],
-						"settings":
-						{
-							"syntax": "Packages/Python/Python.sublime-syntax",
-							"tab_size": 4,
-							"translate_tabs_to_spaces": true
-						},
-						"translation.x": 0.0,
-						"translation.y": 345.0,
-						"zoom_level": 1.0
-					},
-					"stack_index": 4,
+					"stack_index": 0,
 					"type": "text"
 				}
 			]

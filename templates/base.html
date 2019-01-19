@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 {% load static %}
+{% load notifications_tags %}
 <head>
 	<title>{% block title %}MyDay{% endblock %}</title>
 	<meta charset="utf-8">
@@ -31,6 +32,35 @@
 									<a class="nav-link" href="{% url 'accounts:profile_list' %}">Interesting People <span class="oi" data-glyph="people" title="people" aria-hidden="true"></span></a>
 								</li>
 								<li class="nav-item ml-2">
+									{% with notifications=request.user.notifications.all %}
+									<div class="dropdown">
+										<button class="btn dropdown-toggle" data-toggle="dropdown">
+											<span class="oi" data-glyph="bell" title="bell" aria-hidden="true"></span>
+											{% if notifications %}
+												<span class="badge badge-info">{% notifications_unread %}</span>
+											{% endif %}
+										</button>
+										<div class="dropdown-menu dropdown-menu-right w-2">
+											<div class="dropdown-header">
+												You have <b>{% notifications_unread %}</b> unread notifications.
+											</div>
+											{% for n in notifications %}
+												<div class="dropdown-item">
+													<p>
+														<img src="{{ n.actor.image.url }}" class="img-fluid rounded-circle" style="height: 30px; width: 30px;">
+														{{ n.actor }} <b>{{ n.verb }}</b>
+														<a href="{{ n.target.get_absolute_url }}">{{ n.target }}</a>
+														<b>{{ n.timestamp|timesince }} ago</b>
+													</p>
+												</div>
+											{% empty %}
+												nothing
+											{% endfor %}
+										</div>
+									</div>
+									{% endwith %}
+								</li>
+								<li class="nav-item">
 									<div class="dropdown">
 										<img src="{% if request.user.profile.image %}{{ request.user.profile.image.url }}{% else %}{% static 'img/default_person_image.png' %}{% endif%}" class="img-fluid dropdown-toggle rounded-circle" data-toggle="dropdown" style="height: 40px !important;width: 40px !important;">
 										<div class="dropdown-menu">

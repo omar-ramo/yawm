@@ -1,8 +1,10 @@
 from django.db import models
 from django.db.models import Count, F, Q
+from django.db.models.signals import post_save
 from django.utils.text import slugify
 from django.urls import reverse
 from ckeditor_uploader.fields import RichTextUploadingField
+from notifications.signals import notify
 
 from accounts.models import Profile
 from core.utils import get_image_upload_path, generate_random_string
@@ -149,3 +151,15 @@ class CommentLike(models.Model):
 
 	def __str__(self):
 		return '{} : {} ({})'.format(self.user, self.comment, self.created_on)
+
+
+def diary_like_create_handler(sender, instance, created, **kwargs):
+	notify.send(sender=instance.user, recipient=instance.diary.author.user, target=instance.diary, verb='Liked')
+
+post_save.connect(diary_like_create_handler, sender=DiaryLike)
+
+
+def comment_create_handler(sender, instance, created, **kwargs):
+	notify.send(sender=instance.author, recipient=instance.diary.author.user, target=instance.diary, verb='Commented on')
+
+post_save.connect(comment_create_handler, sender=Comment)

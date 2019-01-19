@@ -47,6 +47,7 @@ class DiaryListView(ListView):
 			else:
 				qs = self.model.objects.with_likes_and_comments_count()
 		return qs.active(self.request.user)
+		
 
 class DiaryDetailView(DetailView):
 	model = Diary
