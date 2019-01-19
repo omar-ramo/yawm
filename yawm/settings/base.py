@@ -36,7 +36,8 @@ INSTALLED_APPS = [
     #Third Party
     'crispy_forms',
     'ckeditor',
-    'ckeditor_uploader'
+    'ckeditor_uploader',
+    'notifications',
 ]
 
 MIDDLEWARE = [
@@ -148,3 +149,4 @@ CKEDITOR_CONFIGS = {
  
 ###################################
 
+DJANGO_NOTIFICATIONS_CONFIG = { 'SOFT_DELETE': True}
