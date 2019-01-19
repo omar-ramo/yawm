@@ -48,7 +48,7 @@
 												<div class="dropdown-item">
 													<p>
 														<img src="{{ n.actor.image.url }}" class="img-fluid rounded-circle" style="height: 30px; width: 30px;">
-														{{ n.actor }} <b>{{ n.verb }}</b>
+														<a href="{{ n.actor.get_absolute_url }}">{{ n.actor }}</a> <b>{{ n.verb }}</b>
 														<a href="{{ n.target.get_absolute_url }}">{{ n.target }}</a>
 														<b>{{ n.timestamp|timesince }} ago</b>
 													</p>
