@@ -222,24 +222,24 @@ class CommentLike(models.Model):
 
 
 def diary_like_create_handler(sender, instance, created, **kwargs):
-	notify.send(
-		sender=instance.user, 
-		recipient=instance.diary.author.user, 
-		target=instance.diary, 
-		verb='Liked'
-		)
-
+	if instance.user != instance.diary.author:
+		notify.send(
+			sender=instance.user, 
+			recipient=instance.diary.author.user, 
+			target=instance.diary, 
+			verb='Liked'
+			)
 post_save.connect(diary_like_create_handler, sender=DiaryLike)
 
 
 def comment_create_handler(sender, instance, created, **kwargs):
-	notify.send(
-		sender=instance.author, 
-		recipient=instance.diary.author.user, 
-		target=instance.diary, 
-		verb='Commented on'
-		)
-
+	if instance.author != instance.diary.author:
+		notify.send(
+			sender=instance.author, 
+			recipient=instance.diary.author.user, 
+			target=instance.diary, 
+			verb='Commented on'
+			)
 post_save.connect(comment_create_handler, sender=Comment)
 
 
