@@ -1,9 +1,10 @@
 from django.db import models
 from django.db.models import Count, F, Q
-from django.db.models.signals import post_save
+from django.db.models.signals import post_save, post_delete
 from django.utils.text import slugify
 from django.urls import reverse
 from ckeditor_uploader.fields import RichTextUploadingField
+from notifications.models import Notification
 from notifications.signals import notify
 
 from accounts.models import Profile
@@ -24,7 +25,10 @@ class DiaryQuerySet(models.QuerySet):
 			return self.filter(is_visible=Diary.ALL_CHOICE)
 		else:
 			# User can see his non-visible diaries.
-			return self.filter(Q(author=user.profile) | Q(is_visible=Diary.ALL_CHOICE))
+			return self.filter(
+				Q(author=user.profile) 
+				| Q(is_visible=Diary.ALL_CHOICE)
+				)
 
 	def from_followed_profiles(self, profile):
 		followed_profiles = profile.followed_profiles.all()
@@ -87,15 +91,43 @@ class Diary(models.Model):
 	slug = models.SlugField(max_length=275, blank=True, allow_unicode=True)
 	content = RichTextUploadingField()
 	description = models.CharField(max_length=255, null=True, blank=True)
-	image = models.ImageField(upload_to=get_image_upload_path, null=True, blank=True)
-	is_visible = models.CharField(help_text='Who can see this diary?', max_length=7, choices=VISIBILITY_CHOICES, default=ALL_CHOICE)
-	is_commentable = models.CharField(help_text='Who can comment on this diary?', choices=COMMENTABLE_CHOICES, max_length=7, default=ALL_CHOICE)
-	feeling = models.CharField(help_text='How do you feel?', max_length=15, choices=FEELINGS_CHOICES, null=True, blank=True)
+	image = models.ImageField(
+		upload_to=get_image_upload_path, 
+		null=True, 
+		blank=True
+		)
+	is_visible = models.CharField(
+		help_text='Who can see this diary?', 
+		max_length=7, 
+		choices=VISIBILITY_CHOICES, 
+		default=ALL_CHOICE
+		)
+	is_commentable = models.CharField(
+		help_text='Who can comment on this diary?', 
+		choices=COMMENTABLE_CHOICES, 
+		max_length=7, 
+		default=ALL_CHOICE
+		)
+	feeling = models.CharField(
+		help_text='How do you feel?', 
+		max_length=15, 
+		choices=FEELINGS_CHOICES, 
+		null=True, 
+		blank=True
+		)
 	created_on = models.DateTimeField(auto_now_add=True)
 	updated_on = models.DateTimeField(auto_now=True)
 
-	likes = models.ManyToManyField(Profile, through='DiaryLike', through_fields=('diary', 'user'))
-	author = models.ForeignKey(Profile, related_name='written_diaries', on_delete=models.CASCADE)
+	likes = models.ManyToManyField(
+		Profile, 
+		through='DiaryLike', 
+		through_fields=('diary', 'user')
+		)
+	author = models.ForeignKey(
+		Profile, 
+		related_name='written_diaries', 
+		on_delete=models.CASCADE
+		)
 
 	objects = DiaryQuerySet.as_manager()
 
@@ -108,9 +140,15 @@ class Diary(models.Model):
 
 	def save(self, *args, **kwargs):
 		if(not self.id):
-			new_slug = '{}-{}'.format(slugify(self.title), generate_random_string())
+			new_slug = '{}-{}'.format(
+				slugify(self.title), 
+				generate_random_string()
+				)
 			while Diary.objects.filter(slug=new_slug).exists():
-				new_slug = '{}-{}'.format(slugify(self.title), generate_random_string())
+				new_slug = '{}-{}'.format(
+					slugify(self.title), 
+					generate_random_string()
+					)
 			self.slug = new_slug
 		self.description = ' '.join(self.content[:255].split(' ')[:-1])
 		return super(Diary, self).save(*args, **kwargs)
@@ -119,8 +157,15 @@ class Diary(models.Model):
 		return reverse('diaries:diary_detail', kwargs={'diary_slug': self.slug})
 
 class DiaryLike(models.Model):
-	user = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='liked_diaries')
-	diary = models.ForeignKey(Diary, on_delete=models.CASCADE, related_name='diary_likes')
+	user = models.ForeignKey(
+		Profile, 
+		on_delete=models.CASCADE, 
+		related_name='liked_diaries'
+		)
+	diary = models.ForeignKey(
+		Diary, 
+		on_delete=models.CASCADE, 
+		related_name='diary_likes')
 	created_on = models.DateTimeField(auto_now_add=True)
 	updated_on = models.DateTimeField(auto_now=True)
 
@@ -135,31 +180,70 @@ class Comment(models.Model):
 	created_on = models.DateTimeField(auto_now_add=True)
 	updated_on = models.DateTimeField(auto_now=True)
 
-	diary = models.ForeignKey(Diary, related_name='comments', on_delete=models.CASCADE)
-	likes = models.ManyToManyField(Profile, related_name='liked_comments', through='CommentLike', through_fields=('comment', 'user'))
-	author = models.ForeignKey(Profile, related_name='written_comments', on_delete=models.CASCADE)
+	diary = models.ForeignKey(
+		Diary, 
+		related_name='comments', 
+		on_delete=models.CASCADE
+		)
+	likes = models.ManyToManyField(
+		Profile, 
+		related_name='liked_comments', 
+		through='CommentLike', 
+		through_fields=('comment', 'user'))
+	author = models.ForeignKey(
+		Profile, 
+		related_name='written_comments', 
+		on_delete=models.CASCADE
+		)
 
 	def __str__(self):
 		return '{}... ({})'.format(self.content, self.author)
 
 
 class CommentLike(models.Model):
-	user = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='comment_likes')
-	comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='comment_likes')
+	user = models.ForeignKey(
+		Profile, 
+		on_delete=models.CASCADE, 
+		related_name='comment_likes')
+	comment = models.ForeignKey(
+		Comment, 
+		on_delete=models.CASCADE, 
+		related_name='comment_likes'
+		)
 	created_on = models.DateTimeField(auto_now_add=True)
 	updated_on = models.DateTimeField(auto_now=True)
 
 	def __str__(self):
-		return '{} : {} ({})'.format(self.user, self.comment, self.created_on)
+		return '{} : {} ({})'.format(
+			self.user, 
+			self.comment, 
+			self.created_on
+			)
 
 
 def diary_like_create_handler(sender, instance, created, **kwargs):
-	notify.send(sender=instance.user, recipient=instance.diary.author.user, target=instance.diary, verb='Liked')
+	notify.send(
+		sender=instance.user, 
+		recipient=instance.diary.author.user, 
+		target=instance.diary, 
+		verb='Liked'
+		)
 
 post_save.connect(diary_like_create_handler, sender=DiaryLike)
 
 
 def comment_create_handler(sender, instance, created, **kwargs):
-	notify.send(sender=instance.author, recipient=instance.diary.author.user, target=instance.diary, verb='Commented on')
+	notify.send(
+		sender=instance.author, 
+		recipient=instance.diary.author.user, 
+		target=instance.diary, 
+		verb='Commented on'
+		)
 
 post_save.connect(comment_create_handler, sender=Comment)
+
+
+def delete_notifications_when_diary_is_deleted(sender, instance, **kwargs):
+	qs = Notification.objects.filter(target_object_id=instance.id)
+	qs.delete()
+post_delete.connect(delete_notifications_when_diary_is_deleted, sender=Diary)
