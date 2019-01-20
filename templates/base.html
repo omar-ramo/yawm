@@ -53,14 +53,31 @@
 										<div class="dropdown-menu dropdown-menu-right w-2">
 											<div class="dropdown-header">
 												You have <b>{% notifications_unread %}</b> unread notifications.
+												<a href="{% url 'notifications:mark_all_as_read' %}?next={{ request.path }}">Mark all as read</a>
 											</div>
 											{% for n in notifications %}
+												{% if n.unread  %}
+												<div class="dropdown-item" style="background-color: #DEDEDE;">
+												{% else %}
 												<div class="dropdown-item">
+												{% endif %}
 													<p>
 														<img src="{{ n.actor.image.url }}" class="img-fluid rounded-circle" style="height: 30px; width: 30px;">
 														<a href="{{ n.actor.get_absolute_url }}">{{ n.actor }}</a> <b>{{ n.verb }}</b>
 														<a href="{{ n.target.get_absolute_url }}">{{ n.target }}</a>
 														<b>{{ n.timestamp|timesince }} ago</b>
+
+												{% if n.unread  %}
+													<a href="{% url 'notifications:mark_as_read' slug=n.slug %}?next={{ request.path }}">
+														<span class="oi" data-glyph="action-redo" title="Mark as read" aria-hidden="tru"></span>
+													</a>
+												{% else %}
+													<a href="{% url 'notifications:mark_as_unread' slug=n.slug %}?next={{ request.path }}">
+														<span class="oi" data-glyph="action-undo" title="Mark as unread" aria-hidden="tru"></span>
+													</a>
+												{% endif %}
+														
+														
 													</p>
 												</div>
 											{% empty %}

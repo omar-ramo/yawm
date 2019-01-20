@@ -216,7 +216,7 @@ class SearchView(View):
 			Q(name__contains=q) |
 			Q(user__username__contains=q) |
 			Q(description__contains=q)
-			).distinct()[:9]
+			).distinct()[:12]
 
 		context = {
 			'diaries': diaries,

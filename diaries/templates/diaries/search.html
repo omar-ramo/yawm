@@ -3,11 +3,11 @@
 {% block title %}Search results for :{{ q }} - {{block.super}}{% endblock %}
 
 {% block content %}
-	<h2>Search results for :{{ q }}:</h2>
+	<h2>Search results for :{{ q }}</h2>
 
 	<h3>Users:</h3>
 	{% include 'accounts/snippets/profile_snippet.html' with profiles=profiles %}
-	
+
 	<h3>Diaries:</h3>
 	{% include 'diaries/snippets/diary_list_snippet.html' with diaries=diaries %}
 {% endblock %}
