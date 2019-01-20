@@ -57,9 +57,9 @@
 											</div>
 											{% for n in notifications %}
 												{% if n.unread  %}
-												<div class="dropdown-item" style="background-color: #DEDEDE;">
+												<div class="dropdown-item mt-1" style="background-color: #DEDEDE;">
 												{% else %}
-												<div class="dropdown-item">
+												<div class="dropdown-item mt-1">
 												{% endif %}
 													<p>
 														<img src="{{ n.actor.image.url }}" class="img-fluid rounded-circle" style="height: 30px; width: 30px;">
