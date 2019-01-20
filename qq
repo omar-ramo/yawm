@@ -1,0 +1,534 @@
+warning: LF will be replaced by CRLF in yawm_.sublime-workspace.
+The file will have its original line endings in your working directory
+[1mdiff --git a/diaries/models.py b/diaries/models.py[m
+[1mindex 14ff52a..d830e63 100644[m
+[1m--- a/diaries/models.py[m
+[1m+++ b/diaries/models.py[m
+[36m@@ -1,9 +1,10 @@[m
+ from django.db import models[m
+ from django.db.models import Count, F, Q[m
+[31m-from django.db.models.signals import post_save[m
+[32m+[m[32mfrom django.db.models.signals import post_save, pre_delete[m
+ from django.utils.text import slugify[m
+ from django.urls import reverse[m
+ from ckeditor_uploader.fields import RichTextUploadingField[m
+[32m+[m[32mfrom notifications.models import Notification[m
+ from notifications.signals import notify[m
+ [m
+ from accounts.models import Profile[m
+[36m@@ -24,7 +25,10 @@[m [mclass DiaryQuerySet(models.QuerySet):[m
+ 			return self.filter(is_visible=Diary.ALL_CHOICE)[m
+ 		else:[m
+ 			# User can see his non-visible diaries.[m
+[31m-			return self.filter(Q(author=user.profile) | Q(is_visible=Diary.ALL_CHOICE))[m
+[32m+[m			[32mreturn self.filter([m
+[32m+[m				[32mQ(author=user.profile)[m[41m [m
+[32m+[m				[32m| Q(is_visible=Diary.ALL_CHOICE)[m
+[32m+[m				[32m)[m
+ [m
+ 	def from_followed_profiles(self, profile):[m
+ 		followed_profiles = profile.followed_profiles.all()[m
+[36m@@ -87,15 +91,43 @@[m [mclass Diary(models.Model):[m
+ 	slug = models.SlugField(max_length=275, blank=True, allow_unicode=True)[m
+ 	content = RichTextUploadingField()[m
+ 	description = models.CharField(max_length=255, null=True, blank=True)[m
+[31m-	image = models.ImageField(upload_to=get_image_upload_path, null=True, blank=True)[m
+[31m-	is_visible = models.CharField(help_text='Who can see this diary?', max_length=7, choices=VISIBILITY_CHOICES, default=ALL_CHOICE)[m
+[31m-	is_commentable = models.CharField(help_text='Who can comment on this diary?', choices=COMMENTABLE_CHOICES, max_length=7, default=ALL_CHOICE)[m
+[31m-	feeling = models.CharField(help_text='How do you feel?', max_length=15, choices=FEELINGS_CHOICES, null=True, blank=True)[m
+[32m+[m	[32mimage = models.ImageField([m
+[32m+[m		[32mupload_to=get_image_upload_path,[m[41m [m
+[32m+[m		[32mnull=True,[m[41m [m
+[32m+[m		[32mblank=True[m
+[32m+[m		[32m)[m
+[32m+[m	[32mis_visible = models.CharField([m
+[32m+[m		[32mhelp_text='Who can see this diary?',[m[41m [m
+[32m+[m		[32mmax_length=7,[m[41m [m
+[32m+[m		[32mchoices=VISIBILITY_CHOICES,[m[41m [m
+[32m+[m		[32mdefault=ALL_CHOICE[m
+[32m+[m		[32m)[m
+[32m+[m	[32mis_commentable = models.CharField([m
+[32m+[m		[32mhelp_text='Who can comment on this diary?',[m[41m [m
+[32m+[m		[32mchoices=COMMENTABLE_CHOICES,[m[41m [m
+[32m+[m		[32mmax_length=7,[m[41m [m
+[32m+[m		[32mdefault=ALL_CHOICE[m
+[32m+[m		[32m)[m
+[32m+[m	[32mfeeling = models.CharField([m
+[32m+[m		[32mhelp_text='How do you feel?',[m[41m [m
+[32m+[m		[32mmax_length=15,[m[41m [m
+[32m+[m		[32mchoices=FEELINGS_CHOICES,[m[41m [m
+[32m+[m		[32mnull=True,[m[41m [m
+[32m+[m		[32mblank=True[m
+[32m+[m		[32m)[m
+ 	created_on = models.DateTimeField(auto_now_add=True)[m
+ 	updated_on = models.DateTimeField(auto_now=True)[m
+ [m
+[31m-	likes = models.ManyToManyField(Profile, through='DiaryLike', through_fields=('diary', 'user'))[m
+[31m-	author = models.ForeignKey(Profile, related_name='written_diaries', on_delete=models.CASCADE)[m
+[32m+[m	[32mlikes = models.ManyToManyField([m
+[32m+[m		[32mProfile,[m[41m [m
+[32m+[m		[32mthrough='DiaryLike',[m[41m [m
+[32m+[m		[32mthrough_fields=('diary', 'user')[m
+[32m+[m		[32m)[m
+[32m+[m	[32mauthor = models.ForeignKey([m
+[32m+[m		[32mProfile,[m[41m [m
+[32m+[m		[32mrelated_name='written_diaries',[m[41m [m
+[32m+[m		[32mon_delete=models.CASCADE[m
+[32m+[m		[32m)[m
+ [m
+ 	objects = DiaryQuerySet.as_manager()[m
+ [m
+[36m@@ -108,9 +140,15 @@[m [mclass Diary(models.Model):[m
+ [m
+ 	def save(self, *args, **kwargs):[m
+ 		if(not self.id):[m
+[31m-			new_slug = '{}-{}'.format(slugify(self.title), generate_random_string())[m
+[32m+[m			[32mnew_slug = '{}-{}'.format([m
+[32m+[m				[32mslugify(self.title),[m[41m [m
+[32m+[m				[32mgenerate_random_string()[m
+[32m+[m				[32m)[m
+ 			while Diary.objects.filter(slug=new_slug).exists():[m
+[31m-				new_slug = '{}-{}'.format(slugify(self.title), generate_random_string())[m
+[32m+[m				[32mnew_slug = '{}-{}'.format([m
+[32m+[m					[32mslugify(self.title),[m[41m [m
+[32m+[m					[32mgenerate_random_string()[m
+[32m+[m					[32m)[m
+ 			self.slug = new_slug[m
+ 		self.description = ' '.join(self.content[:255].split(' ')[:-1])[m
+ 		return super(Diary, self).save(*args, **kwargs)[m
+[36m@@ -119,8 +157,15 @@[m [mclass Diary(models.Model):[m
+ 		return reverse('diaries:diary_detail', kwargs={'diary_slug': self.slug})[m
+ [m
+ class DiaryLike(models.Model):[m
+[31m-	user = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='liked_diaries')[m
+[31m-	diary = models.ForeignKey(Diary, on_delete=models.CASCADE, related_name='diary_likes')[m
+[32m+[m	[32muser = models.ForeignKey([m
+[32m+[m		[32mProfile,[m[41m [m
+[32m+[m		[32mon_delete=models.CASCADE,[m[41m [m
+[32m+[m		[32mrelated_name='liked_diaries'[m
+[32m+[m		[32m)[m
+[32m+[m	[32mdiary = models.ForeignKey([m
+[32m+[m		[32mDiary,[m[41m [m
+[32m+[m		[32mon_delete=models.CASCADE,[m[41m [m
+[32m+[m		[32mrelated_name='diary_likes')[m
+ 	created_on = models.DateTimeField(auto_now_add=True)[m
+ 	updated_on = models.DateTimeField(auto_now=True)[m
+ [m
+[36m@@ -135,31 +180,70 @@[m [mclass Comment(models.Model):[m
+ 	created_on = models.DateTimeField(auto_now_add=True)[m
+ 	updated_on = models.DateTimeField(auto_now=True)[m
+ [m
+[31m-	diary = models.ForeignKey(Diary, related_name='comments', on_delete=models.CASCADE)[m
+[31m-	likes = models.ManyToManyField(Profile, related_name='liked_comments', through='CommentLike', through_fields=('comment', 'user'))[m
+[31m-	author = models.ForeignKey(Profile, related_name='written_comments', on_delete=models.CASCADE)[m
+[32m+[m	[32mdiary = models.ForeignKey([m
+[32m+[m		[32mDiary,[m[41m [m
+[32m+[m		[32mrelated_name='comments',[m[41m [m
+[32m+[m		[32mon_delete=models.CASCADE[m
+[32m+[m		[32m)[m
+[32m+[m	[32mlikes = models.ManyToManyField([m
+[32m+[m		[32mProfile,[m[41m [m
+[32m+[m		[32mrelated_name='liked_comments',[m[41m [m
+[32m+[m		[32mthrough='CommentLike',[m[41m [m
+[32m+[m		[32mthrough_fields=('comment', 'user'))[m
+[32m+[m	[32mauthor = models.ForeignKey([m
+[32m+[m		[32mProfile,[m[41m [m
+[32m+[m		[32mrelated_name='written_comments',[m[41m [m
+[32m+[m		[32mon_delete=models.CASCADE[m
+[32m+[m		[32m)[m
+ [m
+ 	def __str__(self):[m
+ 		return '{}... ({})'.format(self.content, self.author)[m
+ [m
+ [m
+ class CommentLike(models.Model):[m
+[31m-	user = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='comment_likes')[m
+[31m-	comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='comment_likes')[m
+[32m+[m	[32muser = models.ForeignKey([m
+[32m+[m		[32mProfile,[m[41m [m
+[32m+[m		[32mon_delete=models.CASCADE,[m[41m [m
+[32m+[m		[32mrelated_name='comment_likes')[m
+[32m+[m	[32mcomment = models.ForeignKey([m
+[32m+[m		[32mComment,[m[41m [m
+[32m+[m		[32mon_delete=models.CASCADE,[m[41m [m
+[32m+[m		[32mrelated_name='comment_likes'[m
+[32m+[m		[32m)[m
+ 	created_on = models.DateTimeField(auto_now_add=True)[m
+ 	updated_on = models.DateTimeField(auto_now=True)[m
+ [m
+ 	def __str__(self):[m
+[31m-		return '{} : {} ({})'.format(self.user, self.comment, self.created_on)[m
+[32m+[m		[32mreturn '{} : {} ({})'.format([m
+[32m+[m			[32mself.user,[m[41m [m
+[32m+[m			[32mself.comment,[m[41m [m
+[32m+[m			[32mself.created_on[m
+[32m+[m			[32m)[m
+ [m
+ [m
+ def diary_like_create_handler(sender, instance, created, **kwargs):[m
+[31m-	notify.send(sender=instance.user, recipient=instance.diary.author.user, target=instance.diary, verb='Liked')[m
+[32m+[m	[32mnotify.send([m
+[32m+[m		[32msender=instance.user,[m[41m [m
+[32m+[m		[32mrecipient=instance.diary.author.user,[m[41m [m
+[32m+[m		[32mtarget=instance.diary,[m[41m [m
+[32m+[m		[32mverb='Liked'[m
+[32m+[m		[32m)[m
+ [m
+ post_save.connect(diary_like_create_handler, sender=DiaryLike)[m
+ [m
+ [m
+ def comment_create_handler(sender, instance, created, **kwargs):[m
+[31m-	notify.send(sender=instance.author, recipient=instance.diary.author.user, target=instance.diary, verb='Commented on')[m
+[32m+[m	[32mnotify.send([m
+[32m+[m		[32msender=instance.author,[m[41m [m
+[32m+[m		[32mrecipient=instance.diary.author.user,[m[41m [m
+[32m+[m		[32mtarget=instance.diary,[m[41m [m
+[32m+[m		[32mverb='Commented on'[m
+[32m+[m		[32m)[m
+[32m+[m
+[32m+[m[32mpost_save.connect(comment_create_handler, sender=Comment)[m
+[32m+[m
+ [m
+[31m-post_save.connect(comment_create_handler, sender=Comment)[m
+\ No newline at end of file[m
+[32m+[m[32mdef delete_notifications_when_diary_is_deleted(sender, instance, **kwargs):[m
+[32m+[m	[32mqs = Notification.objects.filter(target_object_id=instance.id)[m
+[32m+[m	[32mqs.delete()[m
+[32m+[m[32mpre_delete.connect(delete_notifications_when_diary_is_deleted, sender=Diary)[m
+\ No newline at end of file[m
+[1mdiff --git a/yawm_.sublime-workspace b/yawm_.sublime-workspace[m
+[1mindex 634607d..3e40972 100644[m
+[1m--- a/yawm_.sublime-workspace[m
+[1m+++ b/yawm_.sublime-workspace[m
+[36m@@ -3,6 +3,42 @@[m
+ 	{[m
+ 		"selected_items":[m
+ 		[[m
+[32m+[m			[32m[[m
+[32m+[m				[32m"dele",[m
+[32m+[m				[32m"delete_notifications_when_diary_is_deleted"[m
+[32m+[m			[32m],[m
+[32m+[m			[32m[[m
+[32m+[m				[32m"post",[m
+[32m+[m				[32m"post_delete"[m
+[32m+[m			[32m],[m
+[32m+[m			[32m[[m
+[32m+[m				[32m"not",[m
+[32m+[m				[32m"notifications"[m
+[32m+[m			[32m],[m
+[32m+[m			[32m[[m
+[32m+[m				[32m"no",[m
+[32m+[m				[32m"notifications"[m
+[32m+[m			[32m],[m
+[32m+[m			[32m[[m
+[32m+[m				[32m"C",[m
+[32m+[m				[32m"Comment"[m
+[32m+[m			[32m],[m
+[32m+[m			[32m[[m
+[32m+[m				[32m"get",[m
+[32m+[m				[32m"get_context_data"[m
+[32m+[m			[32m],[m
+[32m+[m			[32m[[m
+[32m+[m				[32m"D",[m
+[32m+[m				[32m"DiaryLike"[m
+[32m+[m			[32m],[m
+[32m+[m			[32m[[m
+[32m+[m				[32m"se",[m
+[32m+[m				[32m"sender"[m
+[32m+[m			[32m],[m
+[32m+[m			[32m[[m
+[32m+[m				[32m"ur",[m
+[32m+[m				[32m"urls"[m
+[32m+[m			[32m],[m
+ 			[[m
+ 				"LO",[m
+ 				"LOVE_FEELING"[m
+[36m@@ -39,10 +75,6 @@[m
+ 				"co",[m
+ 				"comment_form"[m
+ 			],[m
+[31m-			[[m
+[31m-				"D",[m
+[31m-				"Diary"[m
+[31m-			],[m
+ 			[[m
+ 				"obje",[m
+ 				"object"[m
+[36m@@ -71,10 +103,6 @@[m
+ 				"is",[m
+ 				"is_visible"[m
+ 			],[m
+[31m-			[[m
+[31m-				"get",[m
+[31m-				"get_queryset"[m
+[31m-			],[m
+ 			[[m
+ 				"c",[m
+ 				"config"[m
+[36m@@ -259,10 +287,6 @@[m
+ 				"slug",[m
+ 				"slug"[m
+ 			],[m
+[31m-			[[m
+[31m-				"C",[m
+[31m-				"CommentForm"[m
+[31m-			],[m
+ 			[[m
+ 				"sl",[m
+ 				"slug_url_kwarg"[m
+[36m@@ -307,10 +331,6 @@[m
+ 				"F",[m
+ 				"ForeignKey"[m
+ 			],[m
+[31m-			[[m
+[31m-				"se",[m
+[31m-				"self"[m
+[31m-			],[m
+ 			[[m
+ 				"ch",[m
+ 				"chars"[m
+[36m@@ -411,10 +431,6 @@[m
+ 				"mov",[m
+ 				"movie_form"[m
+ 			],[m
+[31m-			[[m
+[31m-				"ur",[m
+[31m-				"urlpatterns"[m
+[31m-			],[m
+ 			[[m
+ 				"im",[m
+ 				"imdb_rating"[m
+[36m@@ -498,51 +514,19 @@[m
+ 			[[m
+ 				"sh",[m
+ 				"short_code"[m
+[31m-			],[m
+[31m-			[[m
+[31m-				"I",[m
+[31m-				"ItemCreateView"[m
+[31m-			],[m
+[31m-			[[m
+[31m-				"It",[m
+[31m-				"ItemUpdateView"[m
+[31m-			],[m
+[31m-			[[m
+[31m-				"ne",[m
+[31m-				"next_page"[m
+[31m-			],[m
+[31m-			[[m
+[31m-				"lo",[m
+[31m-				"login_required"[m
+ 			][m
+ 		][m
+ 	},[m
+ 	"buffers":[m
+ 	[[m
+ 		{[m
+[31m-			"file": "diaries/templates/diaries/snippets/diary_list_snippet.html",[m
+[31m-			"settings":[m
+[31m-			{[m
+[31m-				"buffer_size": 3895,[m
+[31m-				"encoding": "UTF-8",[m
+[31m-				"line_ending": "Windows"[m
+[31m-			}[m
+[31m-		},[m
+[31m-		{[m
+[31m-			"file": "diaries/templates/diaries/diary_detail.html",[m
+[31m-			"settings":[m
+[31m-			{[m
+[31m-				"buffer_size": 5352,[m
+[31m-				"encoding": "UTF-8",[m
+[31m-				"line_ending": "Windows"[m
+[31m-			}[m
+[31m-		},[m
+[31m-		{[m
+[32m+[m			[32m"contents": "from django.db import models\nfrom django.db.models import Count, F, Q\nfrom django.db.models.signals import post_save, pre_delete\nfrom django.utils.text import slugify\nfrom django.urls import reverse\nfrom ckeditor_uploader.fields import RichTextUploadingField\nfrom notifications.models import Notification\nfrom notifications.signals import notify\n\nfrom accounts.models import Profile\nfrom core.utils import get_image_upload_path, generate_random_string\n\n\nclass DiaryQuerySet(models.QuerySet):\n\n\tdef with_likes_and_comments_count(self):\n\t\tqs = self.annotate(\n\t\t\tlikes_count=Count(F('likes'), distinct=True),\n\t\t\tcomments_count=Count(F('comments'), distinct=True)\n\t\t\t)\n\t\treturn qs\n\n\tdef active(self, user=None):\n\t\tif not user or not user.is_authenticated:\n\t\t\treturn self.filter(is_visible=Diary.ALL_CHOICE)\n\t\telse:\n\t\t\t# User can see his non-visible diaries.\n\t\t\treturn self.filter(Q(author=user.profile) | Q(is_visible=Diary.ALL_CHOICE))\n\n\tdef from_followed_profiles(self, profile):\n\t\tfollowed_profiles = profile.followed_profiles.all()\n\t\tqs = self.filter(author__in=followed_profiles)\n\t\tqs = qs.annotate(\n\t\t\tlikes_count=Count(F('likes'), distinct=True),\n\t\t\tcomments_count=Count(F('comments'), distinct=True)\n\t\t\t)\n\t\treturn qs\n\n\tdef popular(self):\n\t\tqs = self.with_likes_and_comments_count().annotate(\n\t\t\t\tranking_factor=F('comments_count')\n\t\t\t\t\t\t\t\t+ F('likes_count')\n\t\t\t\t\t\t\t\t# I can't get it to work.\n\t\t\t\t\t\t\t\t# - (\n\t\t\t\t\t\t\t\t\t \t# Cast(timezone.now(), DateTimeField())\n\t\t\t\t\t\t\t\t\t \t# - F('created_on')\n\t\t\t\t\t\t\t\t# ).days\n\t\t\t\t)\n\t\tqs = qs.order_by('-ranking_factor')\n\t\treturn qs\n\nclass Diary(models.Model):\n\tALL_CHOICE = 'all'\n\tNO_ONE_CHOICE = 'no_one'\n\tVISIBILITY_CHOICES = (\n\t\t(ALL_CHOICE, 'All'),\n\t\t(NO_ONE_CHOICE, 'No One')\n\t\t)\n\tCOMMENTABLE_CHOICES = (\n\t\t(ALL_CHOICE, 'All'),\n\t\t(NO_ONE_CHOICE, 'No One')\n\t\t)\n\tANGRY_FEELING = '0'\n\tHAPPY_FEELING = '1'\n\tEXCITED_FEELING = '2'\n\tSAD_FEELING = '3'\n\tLOVE_FEELING = 'LOVE'\n\tSATISFIED_FEELING = 'SATISFIED'\n\tMAD_FEELING = 'MAD'\n\tTIRED_FEELING = 'TIRED'\n\tSURPRISED_FEELING = 'SURPRISED'\n\tAFRAID_FEELING = 'AFRAID'\n\tFEELINGS_CHOICES = (\n\t\t(ANGRY_FEELING, 'Angry'),\n\t\t(HAPPY_FEELING, 'Happy'),\n\t\t(EXCITED_FEELING, 'Excited'),\n\t\t(SAD_FEELING, 'Sad'),\n\t\t(LOVE_FEELING, 'Love'),\n\t\t(SATISFIED_FEELING, 'Satisfied'),\n\t\t(MAD_FEELING, 'Mad'),\n\t\t(TIRED_FEELING, 'Tired'),\n\t\t(SURPRISED_FEELING, 'Surprised'),\n\t\t(AFRAID_FEELING, 'Afraid'),\n\t\t)\n\ttitle = models.CharField(max_length=255)\n\t# Size of slug is bigger than size of title\n\t# Because we want to add random string at the end\n\tslug = models.SlugField(max_length=275, blank=True, allow_unicode=True)\n\tcontent = RichTextUploadingField()\n\tdescription = models.CharField(max_length=255, null=True, blank=True)\n\timage = models.ImageField(upload_to=get_image_upload_path, null=True, blank=True)\n\tis_visible = models.CharField(help_text='Who can see this diary?', max_length=7, choices=VISIBILITY_CHOICES, default=ALL_CHOICE)\n\tis_commentable = models.CharField(help_text='Who can comment on this diary?', choices=COMMENTABLE_CHOICES, max_length=7, default=ALL_CHOICE)\n\tfeeling = models.CharField(help_text='How do you feel?', max_length=15, choices=FEELINGS_CHOICES, null=True, blank=True)\n\tcreated_on = models.DateTimeField(auto_now_add=True)\n\tupdated_on = models.DateTimeField(auto_now=True)\n\n\tlikes = models.ManyToManyField(Profile, through='DiaryLike', through_fields=('diary', 'user'))\n\tauthor = models.ForeignKey(Profile, related_name='written_diaries', on_delete=models.CASCADE)\n\n\tobjects = DiaryQuerySet.as_manager()\n\n\tclass Meta:\n\t\tverbose_name_plural = 'diaries'\n\t\tordering = ['-created_on']\n\n\tdef __str__(self):\n\t\treturn self.title\n\n\tdef save(self, *args, **kwargs):\n\t\tif(not self.id):\n\t\t\tnew_slug = '{}-{}'.format(slugify(self.title), generate_random_string())\n\t\t\twhile Diary.objects.filter(slug=new_slug).exists():\n\t\t\t\tnew_slug = '{}-{}'.format(slugify(self.title), generate_random_string())\n\t\t\tself.slug = new_slug\n\t\tself.description = ' '.join(self.content[:255].split(' ')[:-1])\n\t\treturn super(Diary, self).save(*args, **kwargs)\n\n\tdef get_absolute_url(self):\n\t\treturn reverse('diaries:diary_detail', kwargs={'diary_slug': self.slug})\n\nclass DiaryLike(models.Model):\n\tuser = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='liked_diaries')\n\tdiary = models.ForeignKey(Diary, on_delete=models.CASCADE, related_name='diary_likes')\n\tcreated_on = models.DateTimeField(auto_now_add=True)\n\tupdated_on = models.DateTimeField(auto_now=True)\n\n\tclass Meta:\n\t\tunique_together = ['user', 'diary']\n\n\tdef __str__(self):\n\t\treturn '{} : {} ({})'.format(self.user, self.diary, self.created_on)\n\nclass Comment(models.Model):\n\tcontent = models.TextField()\n\tcreated_on = models.DateTimeField(auto_now_add=True)\n\tupdated_on = models.DateTimeField(auto_now=True)\n\n\tdiary = models.ForeignKey(Diary, related_name='comments', on_delete=models.CASCADE)\n\tlikes = models.ManyToManyField(Profile, related_name='liked_comments', through='CommentLike', through_fields=('comment', 'user'))\n\tauthor = models.ForeignKey(Profile, related_name='written_comments', on_delete=models.CASCADE)\n\n\tdef __str__(self):\n\t\treturn '{}... ({})'.format(self.content, self.author)\n\n\nclass CommentLike(models.Model):\n\tuser = models.ForeignKey(Profile, on_delete=models.CASCADE, related_name='comment_likes')\n\tcomment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='comment_likes')\n\tcreated_on = models.DateTimeField(auto_now_add=True)\n\tupdated_on = models.DateTimeField(auto_now=True)\n\n\tdef __str__(self):\n\t\treturn '{} : {} ({})'.format(self.user, self.comment, self.created_on)\n\n\ndef diary_like_create_handler(sender, instance, created, **kwargs):\n\tnotify.send(sender=instance.user, recipient=instance.diary.author.user, target=instance.diary, verb='Liked')\n\npost_save.connect(diary_like_create_handler, sender=DiaryLike)\n\n\ndef comment_create_handler(sender, instance, created, **kwargs):\n\tnotify.send(sender=instance.author, recipient=instance.diary.author.user, target=instance.diary, verb='Commented on')\n\npost_save.connect(comment_create_handler, sender=Comment)\n\n\ndef delete_notifications_when_diary_is_deleted(sender, instance, **kwargs):\n\tqs = Notification.objects.filter(recipient=instance.author)\n\tqs = qs.filter()\n\tnotifications.delete()\npre_delete.connect(delete_notifications_when_diary_is_deleted, sender=Diary)",[m
+ 			"file": "diaries/models.py",[m
+[32m+[m			[32m"file_size": 6448,[m
+[32m+[m			[32m"file_write_time": 131923778035924860,[m
+ 			"settings":[m
+ 			{[m
+[31m-				"buffer_size": 5401,[m
+[31m-				"encoding": "UTF-8",[m
+[32m+[m				[32m"buffer_size": 6294,[m
+ 				"line_ending": "Windows"[m
+ 			}[m
+ 		}[m
+[36m@@ -588,33 +572,33 @@[m
+ 		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/templates",[m
+ 		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/templates/diaries",[m
+ 		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/templates/diaries/snippets",[m
+[31m-		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/tests",[m
+[31m-		"/C/Users/omar/Documents/Dev/Django/yawm/yawm",[m
+[31m-		"/C/Users/omar/Documents/Dev/Django/yawm/yawm/settings"[m
+[32m+[m		[32m"/C/Users/omar/Documents/Dev/Django/yawm/templates"[m
+ 	],[m
+ 	"file_history":[m
+ 	[[m
+[31m-		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/urls.py",[m
+[32m+[m		[32m"/C/Users/omar/Documents/Dev/Django/yawm/templates/base.html",[m
+[32m+[m		[32m"/C/Users/omar/Documents/Dev/Django/yawm/requirements.txt",[m
+[32m+[m		[32m"/C/Users/omar/Documents/Dev/Django/yawm/.gitignore",[m
+[32m+[m		[32m"/C/Users/omar/Documents/Dev/Django/yawm/yawm/settings/base.py",[m
+[32m+[m		[32m"/C/Users/omar/Documents/Dev/Django/yawm/yawm/urls.py",[m
+ 		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/views.py",[m
+[32m+[m		[32m"/C/Users/omar/Documents/Dev/Django/yawm/diaries/templates/diaries/diary_detail.html",[m
+[32m+[m		[32m"/C/Users/omar/Documents/Dev/Django/yawm/diaries/templates/diaries/snippets/diary_list_snippet.html",[m
+[32m+[m		[32m"/C/Users/omar/Documents/Dev/Django/yawm/diaries/urls.py",[m
+ 		"/C/Users/omar/Documents/Dev/Django/yawm/README.md",[m
+[31m-		"/C/Users/omar/Documents/Dev/Django/yawm/.gitignore",[m
+[31m-		"/C/Users/omar/Documents/Dev/Django/yawm/requirements.txt",[m
+ 		"/C/Users/omar/Documents/Dev/Django/yawm/Procfile.windows",[m
+ 		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/models.py",[m
+ 		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/tests/test_views.py",[m
+ 		"/C/Users/omar/Documents/Dev/Django/locallibrary/catalog/tests/test_views.py",[m
+[31m-		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/templates/diaries/snippets/diary_list_snippet.html",[m
+ 		"/C/Users/omar/Documents/Dev/Django/yawm/accounts/views.py",[m
+ 		"/C/Users/omar/Documents/Dev/Django/locallibrary/catalog/tests/test_models.py",[m
+ 		"/C/Users/omar/Documents/Dev/Django/locallibrary/catalog/tests/test_forms.py",[m
+ 		"/C/Users/omar/Documents/Dev/Django/yawm/yawm/settings/dev.py",[m
+[31m-		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/templates/diaries/diary_detail.html",[m
+ 		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/admin.py",[m
+ 		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/templates/diaries/comment_delete.html",[m
+ 		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/templates/diaries/diary_delete.html",[m
+ 		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/templates/diaries/diary_update.html",[m
+ 		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/templates/diaries/diary_create.html",[m
+[31m-		"/C/Users/omar/Documents/Dev/Django/yawm/yawm/settings/base.py",[m
+ 		"/C/Users/omar/Documents/Dev/Django/yawm/.env",[m
+ 		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/tests/__init__.py",[m
+ 		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/tests/test_forms.py",[m
+[36m@@ -631,9 +615,7 @@[m
+ 		"/C/Users/omar/Documents/Dev/Django/yawm/Procfile",[m
+ 		"/C/Users/omar/Documents/Dev/Django/yawm/yawm/wsgi.py",[m
+ 		"/C/Users/omar/Documents/Dev/Django/yawm/core/static/core/css/main.css",[m
+[31m-		"/C/Users/omar/Documents/Dev/Django/yawm/templates/base.html",[m
+ 		"/C/Users/omar/Documents/Dev/Django/yawm/yawm/settings.py",[m
+[31m-		"/C/Users/omar/Documents/Dev/Django/yawm/yawm/urls.py",[m
+ 		"/C/Users/omar/Documents/Dev/Django/yawm/diaries/forms.py",[m
+ 		"/C/Users/omar/Documents/Dev/Django/yawm/core/templates/core/snippets/form_fields.html",[m
+ 		"/C/Users/omar/Documents/Dev/Django/yawm/core/static/core/js/main.js",[m
+[36m@@ -739,6 +721,9 @@[m
+ 		"case_sensitive": false,[m
+ 		"find_history":[m
+ 		[[m
+[32m+[m			[32m"diary_like",[m
+[32m+[m			[32m"my",[m
+[32m+[m			[32m"graph",[m
+ 			"LOVE",[m
+ 			"love",[m
+ 			"<a href=\"#!\" class=\"dropdown-item\">facebook</a>",[m
+[36m@@ -863,10 +848,7 @@[m
+ 			"lname",[m
+ 			"range",[m
+ 			"fname",[m
+[31m-			"a class=\"nav-li",[m
+[31m-			" class=\"breadcrumb-link\"",[m
+[31m-			"page",[m
+[31m-			"ml-1"[m
+[32m+[m			[32m"a class=\"nav-li"[m
+ 		],[m
+ 		"highlight": true,[m
+ 		"in_selection": false,[m
+[36m@@ -884,95 +866,34 @@[m
+ 	"groups":[m
+ 	[[m
+ 		{[m
+[31m-			"selected": 2,[m
+[32m+[m			[32m"selected": 0,[m
+ 			"sheets":[m
+ 			[[m
+ 				{[m
+ 					"buffer": 0,[m
+[31m-					"file": "diaries/templates/diaries/snippets/diary_list_snippet.html",[m
+[31m-					"semi_transient": false,[m
+[31m-					"settings":[m
+[31m-					{[m
+[31m-						"buffer_size": 3895,[m
+[31m-						"regions":[m
+[31m-						{[m
+[31m-						},[m
+[31m-						"selection":[m
+[31m-						[[m
+[31m-							[[m
+[31m-								1131,[m
+[31m-								943[m
+[31m-							][m
+[31m-						],[m
+[31m-						"settings":[m
+[31m-						{[m
+[31m-							"syntax": "Packages/HTML/HTML.sublime-syntax",[m
+[31m-							"translate_tabs_to_spaces": false[m
+[31m-						},[m
+[31m-						"translation.x": 0.0,[m
+[31m-						"translation.y": 138.0,[m
+[31m-						"zoom_level": 1.0[m
+[31m-					},[m
+[31m-					"stack_index": 2,[m
+[31m-					"type": "text"[m
+[31m-				},[m
+[31m-				{[m
+[31m-					"buffer": 1,[m
+[31m-					"file": "diaries/templates/diaries/diary_detail.html",[m
+[31m-					"semi_transient": false,[m
+[31m-					"settings":[m
+[31m-					{[m
+[31m-						"buffer_size": 5352,[m
+[31m-						"regions":[m
+[31m-						{[m
+[31m-						},[m
+[31m-						"selection":[m
+[31m-						[[m
+[31m-							[[m
+[31m-								2245,[m
+[31m-								2245[m
+[31m-							],[m
+[31m-							[[m
+[31m-								3665,[m
+[31m-								3665[m
+[31m-							][m
+[31m-						],[m
+[31m-						"settings":[m
+[31m-						{[m
+[31m-							"syntax": "Packages/HTML/HTML.sublime-syntax",[m
+[31m-							"translate_tabs_to_spaces": false[m
+[31m-						},[m
+[31m-						"translation.x": 0.0,[m
+[31m-						"translation.y": 1031.0,[m
+[31m-						"zoom_level": 1.0[m
+[31m-					},[m
+[31m-					"stack_index": 1,[m
+[31m-					"type": "text"[m
+[31m-				},[m
+[31m-				{[m
+[31m-					"buffer": 2,[m
+ 					"file": "diaries/models.py",[m
+ 					"semi_transient": false,[m
+ 					"settings":[m
+ 					{[m
+[31m-						"buffer_size": 5401,[m
+[32m+[m						[32m"buffer_size": 6294,[m
+ 						"regions":[m
+ 						{[m
+ 						},[m
+ 						"selection":[m
+ 						[[m
+ 							[[m
+[31m-								2047,[m
+[31m-								2047[m
+[32m+[m								[32m6192,[m
+[32m+[m								[32m6192[m
+ 							][m
+ 						],[m
+ 						"settings":[m
+ 						{[m
+ 							"syntax": "Packages/Python/Python.sublime-syntax",[m
+[31m-							"translate_tabs_to_spaces": false[m
+[32m+[m							[32m"translate_tabs_to_spaces": false,[m
+[32m+[m							[32m"word_wrap": true[m
+ 						},[m
+ 						"translation.x": 0.0,[m
+[31m-						"translation.y": 1380.0,[m
+[32m+[m						[32m"translation.y": 3588.0,[m
+ 						"zoom_level": 1.0[m
+ 					},[m
+ 					"stack_index": 0,[m

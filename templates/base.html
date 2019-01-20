@@ -20,9 +20,19 @@
 				<nav class="navbar navbar-expand-sm">
 					<a class="navbar-brand" href="{% url 'diaries:diary_list' %}">Diaries</a>
 					<button class="navbar-toggler" data-toggle="collapse" data-target="#TopNavabar">
-						<span class="navbar-toggler-icon">---</span>
+						<span class="navbar-toggler-icon oi" data-glyph="menu" title="menu" aria-hidden="true"></span>
 					</button>
-					<div class="ml-4 collapse navbar-collapse" id="TopNavabar" style="margin-left: 50% !important;">
+					<form class="form form-inline ml-2 mt-2" action="{% url 'diaries:search' %}">
+						<div class="input-group">
+							<div class="input-group-append">
+								<input class="form-control" name="q" max-length="50" value="{{ q }}"></input>
+								<button class="btn btn-body">
+									<span class="oi" data-glyph="magnifying-glass" title="magnifying-glass" aria-hidden="true"></span>
+								</button>
+							</div>
+						</div>
+					</form>
+					<div class="ml-4 collapse navbar-collapse" id="TopNavabar" style="margin-left: 25% !important;">
 						<ul class="navbar-nav">
 							{% if request.user.is_authenticated %}
 								<li class="nav-item ml-2">

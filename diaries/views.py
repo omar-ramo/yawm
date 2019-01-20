@@ -14,6 +14,7 @@ from django.urls import reverse
 
 from .forms import DiaryForm, CommentForm
 from .models import Diary, DiaryLike, Comment, CommentLike
+from accounts.models import Profile
 
 
 DIARIES_PER_PAGE = 9
@@ -203,3 +204,23 @@ class CommentDeleteView(LoginRequiredMixin, DeleteView):
 			slug=self.kwargs[self.diary_slug_url_kwarg]
 			)
 		return diary.get_absolute_url()
+
+class SearchView(View):
+	def get(self, request):
+		q = request.GET.get('q', '')
+
+		diaries = Diary.objects.with_likes_and_comments_count().active()
+		diaries = diaries.filter(title__contains=q).distinct()[:9]
+
+		profiles = Profile.objects.filter(
+			Q(name__contains=q) |
+			Q(user__username__contains=q) |
+			Q(description__contains=q)
+			).distinct()[:9]
+
+		context = {
+			'diaries': diaries,
+			'profiles': profiles,
+			'q': q
+		}
+		return render(request, 'diaries/search.html', context)

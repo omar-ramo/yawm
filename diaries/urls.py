@@ -39,4 +39,5 @@ urlpatterns = [
     	])
     ),
     path('create', views.DiaryCreateView.as_view(), name='diary_create'),
+    path('search', views.SearchView.as_view(), name='search'),
 ]
