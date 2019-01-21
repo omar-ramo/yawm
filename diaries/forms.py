@@ -1,4 +1,5 @@
 from django import forms
+import bleach
 from ckeditor_uploader.widgets import CKEditorUploadingWidget
 
 from .models import Diary, Comment
@@ -15,9 +16,14 @@ class DiaryForm(forms.ModelForm):
 			'is_commentable',
 			'feeling',
 			]
-		# widgets = {
-		# 	'content': CKEditorUploadingWidget()
-		# }
+
+		def clean_content(self):
+			content = self.cleaned_data['content']
+			content = bleach.clean(content)
+			content = bleach.linkify(content)
+			return content
+
+
 
 class CommentForm(forms.ModelForm):
 	class Meta:
