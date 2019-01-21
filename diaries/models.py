@@ -141,12 +141,12 @@ class Diary(models.Model):
 	def save(self, *args, **kwargs):
 		if(not self.id):
 			new_slug = '{}-{}'.format(
-				slugify(self.title), 
+				slugify(self.title, allow_unicode=True), 
 				generate_random_string()
 				)
 			while Diary.objects.filter(slug=new_slug).exists():
 				new_slug = '{}-{}'.format(
-					slugify(self.title), 
+					slugify(self.title, allow_unicode=True), 
 					generate_random_string()
 					)
 			self.slug = new_slug

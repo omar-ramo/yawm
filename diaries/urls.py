@@ -20,7 +20,7 @@ urlpatterns = [
             template_name='diaries/diary_list_discover.html'
             ), 
         name='discover_diary_list'),
-    path('diary/<slug:diary_slug>/', include([
+    path('diary/<str:diary_slug>/', include([
     	path('', views.DiaryDetailView.as_view(), name='diary_detail'),
         path('like', views.DiaryLikeView.as_view(), name='diary_like'),
         path('update', views.DiaryUpdateView.as_view(), name='diary_update'),
