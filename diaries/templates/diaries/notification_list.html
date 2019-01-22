@@ -19,7 +19,7 @@
       <div class="col-12 mt-1">
       {% endif %}
         <p>
-          <img src="{{ n.actor.image.url }}" class="img-fluid rounded-circle" style="height: 30px; width: 30px;">
+          <img src="{% if n.actor.image %}{{ n.actor.image.url }}{% else %}{% static 'img/default_person_image.png' %}{% endif%}" class="img-fluid rounded-circle" style="height: 30px; width: 30px;">
           <a href="{{ n.actor.get_absolute_url }}">{{ n.actor }}</a> <b>{{ n.verb }}</b>
           <a href="{{ n.target.get_absolute_url }}">{{ n.target }}</a>
           <b>{{ n.timestamp|timesince }} ago</b>

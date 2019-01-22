@@ -42,7 +42,7 @@
 									<a class="nav-link" href="{% url 'accounts:profile_list' %}">Interesting People <span class="oi" data-glyph="people" title="people" aria-hidden="true"></span></a>
 								</li>
 								<li class="nav-item ml-2">
-									{% with notifications=request.user.notifications.all %}
+									{% with notifications=request.user.notifications.all|slice:":7" %}
 									<div class="dropdown">
 										<button class="btn dropdown-toggle" data-toggle="dropdown">
 											<span class="oi" data-glyph="bell" title="bell" aria-hidden="true"></span>
@@ -83,6 +83,9 @@
 											{% empty %}
 												<span class="dropdown-item-text">You are up to date.</span>
 											{% endfor %}
+											<div  class="dropdown-item text-center">
+												<a href="{% url 'diaries:notification_list' %}">Show all notifications</a>
+											</div>
 										</div>
 									</div>
 									{% endwith %}
