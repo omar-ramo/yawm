@@ -1,4 +1,5 @@
 from django.urls import path, include
+from notifications.views import NotificationViewList
 
 from . import views
 
@@ -40,4 +41,11 @@ urlpatterns = [
     ),
     path('create', views.DiaryCreateView.as_view(), name='diary_create'),
     path('search', views.SearchView.as_view(), name='search'),
+    path(
+        'notifications', 
+        views.NotificationListView.as_view(
+            template_name='diaries/notification_list.html'
+            ), 
+        name='notification_list'
+        ),
 ]

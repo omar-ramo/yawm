@@ -11,6 +11,8 @@ from django.views.generic import (
 	CreateView
 	)
 from django.urls import reverse
+from notifications.views import NotificationViewList
+from notifications.models import Notification
 
 from .forms import DiaryForm, CommentForm
 from .models import Diary, DiaryLike, Comment, CommentLike
@@ -224,3 +226,13 @@ class SearchView(View):
 			'q': q
 		}
 		return render(request, 'diaries/search.html', context)
+
+class NotificationListView(LoginRequiredMixin, NotificationViewList):
+	template_name='diaries/notification_list.html'
+	paginate_by = 10
+
+	def get_queryset(self):
+		qs = Notification.objects.filter(recipient=self.request.user)
+		qs = qs.active()
+		return qs
+
