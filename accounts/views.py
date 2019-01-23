@@ -31,9 +31,17 @@ class SignupView(CreateView):
 class ProfileUpdateView(LoginRequiredMixin, UpdateView):
 	model = Profile
 	form_class = ProfileForm
-	slug_field = 'user__username'
 	slug_url_kwarg = 'username'
 	template_name = 'accounts/profile_update.html'
+
+	def get_object(self):
+		obj = get_object_or_404(
+			self.model, 
+			user__username=self.kwargs[self.slug_url_kwarg]
+			)
+		if not obj == self.request.user.profile:
+			raise Http404
+		return obj
 
 class ProfileListView(LoginRequiredMixin, ListView):
 	template_name = 'accounts/profile_list.html'
