@@ -4,7 +4,14 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-from django.views.generic import View, CreateView, DetailView, ListView, UpdateView
+from django.views.generic import (
+		View, 
+		CreateView, 
+		DetailView, 
+		ListView, 
+		UpdateView
+		)
+from notifications.signals import notify
 
 from .forms import ProfileForm
 from .models import Profile
@@ -40,15 +47,20 @@ class ProfileListView(LoginRequiredMixin, ListView):
 		username = self.request.GET.get('username', '')
 
 		if username:
-			target_profile = get_object_or_404(Profile, user__username=username)
+			target_profile = get_object_or_404(
+				Profile, 
+				user__username=username
+				)
 		else:
 			target_profile = self.request.user.profile
 
 		if criteria == 'following':
-			profiles = target_profile.followed_profiles.all().with_diaries_followers_count()
+			profiles = target_profile.followed_profiles.all()\
+				.with_diaries_followers_count()
 			title = 'People {} follow(s)'
 		elif criteria == 'followers':
-			profiles = target_profile.followers.all().with_diaries_followers_count()
+			profiles = target_profile.followers.all()\
+				.with_diaries_followers_count()
 			title = 'People that follow {}'
 		else:
 			profiles = Profile.objects.top()
@@ -78,7 +90,8 @@ class ProfileDetailView(DetailView):
 
 	def get_context_data(self, *args, **kwargs):
 		cx = super().get_context_data(*args, **kwargs)
-		cx['diaries'] = self.object.written_diaries.with_likes_and_comments_count().active(self.request.user)
+		cx['diaries'] = self.object.written_diaries\
+			.with_likes_and_comments_count().active(self.request.user)
 		return cx
 
 class ProfileFollowView(LoginRequiredMixin, View):
@@ -95,6 +108,11 @@ class ProfileFollowView(LoginRequiredMixin, View):
 				profile.followers.remove(current_profile)
 			else:
 				profile.followers.add(current_profile)
+				notify.send(
+					sender=current_profile, 
+					recipient=profile.user, 
+					verb='Started following you'
+					)
 			profile.save()
 			return redirect(profile)
 		return redirect(profile)

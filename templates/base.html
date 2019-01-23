@@ -64,8 +64,10 @@
 													<p>
 														<img src="{% if n.actor.image %}{{ n.actor.image.url }}{% else %}{% static 'img/default_person_image.png' %}{% endif%}" class="img-fluid rounded-circle" style="height: 30px; width: 30px;">
 														<a href="{{ n.actor.get_absolute_url }}">{{ n.actor }}</a> <b>{{ n.verb }}</b>
+														{% if n.target %}
 														<a href="{{ n.target.get_absolute_url }}">{{ n.target }}</a>
-														<b>{{ n.timestamp|timesince }} ago</b>
+														{% endif %}
+														<i>{{ n.timestamp|timesince }} ago</i>
 
 												{% if n.unread  %}
 													<a href="{% url 'notifications:mark_as_read' slug=n.slug %}?next={{ request.path }}">
