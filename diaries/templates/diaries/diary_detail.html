@@ -18,14 +18,16 @@
 				<img src="{{ diary.image.url }}" class="img-fluid mx-auto d-block">
 			</div>
 			{% endif %}
-			<p class="float-right mt-2">
-				<a href="{% url 'diaries:diary_update' diary.slug %}" class="btn btn-info">
-					edit <span class="oi" data-glyph="pencil" title="pencil" aria-hidden="true"></span>
-				</a>
-				<a href="{% url 'diaries:diary_delete' diary.slug %}" class="btn btn-danger">
-					delete <span class="oi" data-glyph="trash" title="trash" aria-hidden="true"></span>
-				</a>
-			</p>
+			{% if request.user.profile == diary.author %}
+				<p class="float-right mt-2">
+					<a href="{% url 'diaries:diary_update' diary.slug %}" class="btn btn-info">
+						edit <span class="oi" data-glyph="pencil" title="pencil" aria-hidden="true"></span>
+					</a>
+					<a href="{% url 'diaries:diary_delete' diary.slug %}" class="btn btn-danger">
+						delete <span class="oi" data-glyph="trash" title="trash" aria-hidden="true"></span>
+					</a>
+				</p>
+			{% endif %}
 			<h1 class="text-center">{{ diary.title }}</h1>
 			<div class="row">
 				<div class="col-sm-10">
@@ -36,7 +38,9 @@
 							<div class="media-body ml-2">
 								<h3>
 									<a href="{{ diary.author.get_absolute_url }}">{{ diary.author }}</a>
+									{% if diary.feeling %}
 									<small class="text-secondary">({{ diary.get_feeling_display }})</small>
+									{% endif %}
 								</h3>
 								<p>Published <b>{{ diary.created_on|timesince }}</b> ago | On: <b>{{ diary.created_on|date:'DATE_FORMAT' }}</b></p>
 							</div>
@@ -100,7 +104,7 @@
 			<div class="media mt-3 jumbotron p-1 mt-1">
 				<img src="{% if comment.author.image %}{{ comment.author.image.url }}{% else %}{% static 'img/default_person_image.png' %}{% endif%}" class="img-fluid rounded-circle author-metadata-image mt-2">
 				<div class="media-body ml-2">
-					<h4 class="d-inline-block mr-3">{{ comment.author }}</h4>
+					<h4 class="d-inline-block mr-3"><a href="{{ comment.author.get_absolute_url }}">{{ comment.author }}</a></h4>
 					<small class="d-inline-block mr-3">{{ comment.created_on|timesince }} ago</small>
 					{% if request.user.profile == comment.author %}
 					<span class="right">
