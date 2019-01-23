@@ -81,6 +81,11 @@ class Profile(models.Model):
 			self.name = self.user.username
 		return super(Profile, self).save(*args, **kwargs)
 
+	@property
+	def visible_written_diaries_count(self):
+		return self.written_diaries.filter(is_visible='all').count()
+	
+
 
 def create_profile(sender, instance, created, **kwargs):
 	if created:

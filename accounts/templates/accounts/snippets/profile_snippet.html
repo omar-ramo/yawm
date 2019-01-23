@@ -7,7 +7,11 @@
 				<img src="{% if profile.image %}{{ profile.image.url }}{% else %}{% static 'img/default_person_image.png' %}{% endif%}" class="img-fluid rounded-circle author-metadata-image">
 				<h5>{{ profile.name }}</h5>
 			</a>
+			{% if request.user.profile == profile %}
 			<p>Diaries: {{ profile.written_diaries_count }}</p>
+			{% else %}
+			<p>Diaries: {{ profile.visible_written_diaries_count }}</p>
+			{% endif %}		
 			<p>Followers: {{ profile.followers_count }}</p>
 			<form method="post" action="{% url 'accounts:profile_follow' profile.user.username %}">
 				{% csrf_token %}
