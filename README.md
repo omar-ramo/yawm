@@ -1,11 +1,13 @@
 # Yawm
-It's just like a blog application. but here it's intended as a place where users can write there diaries. some of it's functionalities are: likes,comments, drafts, following system...
+It's just like a blog application. but here it's intended as a place where users can write there diaries. some of it's functionalities are: likes,comments, drafts, following system, notification(not in real time for now)...
 
 ### What i used:
 
 -  **Django**: backend
 -  **django-ckeditor**: Diray content editor.
 -  **django-crispy-forms**: To render forms
+-  **django-notification-hq**: To manage notifications
+-  **bleach**: To clean and linkfy diary content
 -  ...
 
 for production:
