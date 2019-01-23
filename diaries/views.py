@@ -36,13 +36,13 @@ class DiaryListView(ListView):
 			qs = self.model.objects.with_likes_and_comments_count()
 		else:
 			if self.request.user.is_authenticated:
-				# User will only see the diaries of people he follow + his own
+				# User will only see the diaries of people he follows + his own
 				# I will use .active(self.request.user) here because the
 				# Resulting qs of .union() doesn't allow oher operations
 				# other than: count, order_by, values,values_list
 				followed_profiles_diaries = Diary.objects\
-					.from_followed_profiles(self.request.user.profile).order_by()\
-					.active(self.request.user)
+					.from_followed_profiles(self.request.user.profile)\
+					.order_by().active(self.request.user)
 
 				current_profile_diaries = Diary.objects\
 					.with_likes_and_comments_count().filter(
@@ -207,7 +207,8 @@ class SearchView(View):
 	def get(self, request):
 		q = request.GET.get('q', '')
 
-		diaries = Diary.objects.with_likes_and_comments_count().active(self.request.user)
+		diaries = Diary.objects.with_likes_and_comments_count()\
+			.active(self.request.user)
 		diaries = diaries.filter(title__contains=q).distinct()[:9]
 
 		profiles = Profile.objects.filter(

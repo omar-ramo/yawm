@@ -152,7 +152,10 @@ class Diary(models.Model):
 		return super(Diary, self).save(*args, **kwargs)
 
 	def get_absolute_url(self):
-		return reverse('diaries:diary_detail', kwargs={'diary_slug': self.slug})
+		return reverse(
+			'diaries:diary_detail', 
+			kwargs={'diary_slug': self.slug}
+			)
 
 class DiaryLike(models.Model):
 	user = models.ForeignKey(
