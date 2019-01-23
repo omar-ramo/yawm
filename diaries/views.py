@@ -36,20 +36,25 @@ class DiaryListView(ListView):
 			qs = self.model.objects.with_likes_and_comments_count()
 		else:
 			if self.request.user.is_authenticated:
-				# User will only see the diaries of people he follow + his own 
+				# User will only see the diaries of people he follow + his own
+				# I will use .active(self.request.user) here because the
+				# Resulting qs of .union() doesn't allow oher operations
+				# other than: count, order_by, values,values_list
 				followed_profiles_diaries = Diary.objects\
-				.from_followed_profiles(self.request.user.profile).order_by()
+					.from_followed_profiles(self.request.user.profile).order_by()\
+					.active(self.request.user)
 
 				current_profile_diaries = Diary.objects\
-				.with_likes_and_comments_count().filter(
-					author=self.request.user.profile
-					).order_by()
+					.with_likes_and_comments_count().filter(
+						author=self.request.user.profile
+						).order_by().active(self.request.user)
 
-				qs = followed_profiles_diaries.union(current_profile_diaries)\
-				.order_by('-created_on')
+				qs = followed_profiles_diaries.union(current_profile_diaries)
+				qs = qs.order_by('-created_on')
 			else:
 				qs = self.model.objects.with_likes_and_comments_count()
-		return qs.active(self.request.user)
+		qs = qs.active(self.request.user)
+		return qs
 		
 
 class DiaryDetailView(DetailView):
@@ -63,15 +68,13 @@ class DiaryDetailView(DetailView):
 		qs = self.model.objects.with_likes_and_comments_count()
 		if self.request.user.is_authenticated:
 			qs = qs.filter(
-				Q(author=self.request.user.profile)
-				| Q(is_visible=Diary.ALL_CHOICE),
 				slug=self.kwargs[self.slug_url_kwarg]
 				)
 		else:
 			qs = qs.filter(
-				is_visible=Diary.ALL_CHOICE, 
 				slug=self.kwargs[self.slug_url_kwarg]
 				)
+		qs = qs.active(self.request.user)
 		obj = qs.first()
 		if obj == None:
 			raise Http404()
@@ -211,7 +214,7 @@ class SearchView(View):
 	def get(self, request):
 		q = request.GET.get('q', '')
 
-		diaries = Diary.objects.with_likes_and_comments_count().active()
+		diaries = Diary.objects.with_likes_and_comments_count().active(self.request.user)
 		diaries = diaries.filter(title__contains=q).distinct()[:9]
 
 		profiles = Profile.objects.filter(

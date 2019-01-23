@@ -13,6 +13,17 @@ from core.utils import get_image_upload_path, generate_random_string
 
 class DiaryQuerySet(models.QuerySet):
 
+	def active(self, user):
+		if not user.is_authenticated:
+			qs = self.filter(is_visible=Diary.ALL_CHOICE)
+		else:
+			# User can see his non-visible diaries.
+			qs = self.filter(
+					Q(author=user.profile) 
+					| Q(is_visible=Diary.ALL_CHOICE)
+					).distinct()
+		return qs
+
 	def with_likes_and_comments_count(self):
 		qs = self.annotate(
 			likes_count=Count(F('likes'), distinct=True),
@@ -20,23 +31,10 @@ class DiaryQuerySet(models.QuerySet):
 			)
 		return qs
 
-	def active(self, user=None):
-		if not user or not user.is_authenticated:
-			return self.filter(is_visible=Diary.ALL_CHOICE)
-		else:
-			# User can see his non-visible diaries.
-			return self.filter(
-				Q(author=user.profile) 
-				| Q(is_visible=Diary.ALL_CHOICE)
-				)
-
 	def from_followed_profiles(self, profile):
 		followed_profiles = profile.followed_profiles.all()
 		qs = self.filter(author__in=followed_profiles)
-		qs = qs.annotate(
-			likes_count=Count(F('likes'), distinct=True),
-			comments_count=Count(F('comments'), distinct=True)
-			)
+		qs = qs.with_likes_and_comments_count()
 		return qs
 
 	def popular(self):
