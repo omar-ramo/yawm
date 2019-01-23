@@ -66,14 +66,7 @@ class DiaryDetailView(DetailView):
 
 	def get_object(self):
 		qs = self.model.objects.with_likes_and_comments_count()
-		if self.request.user.is_authenticated:
-			qs = qs.filter(
-				slug=self.kwargs[self.slug_url_kwarg]
-				)
-		else:
-			qs = qs.filter(
-				slug=self.kwargs[self.slug_url_kwarg]
-				)
+		qs = qs.filter(slug=self.kwargs[self.slug_url_kwarg])
 		qs = qs.active(self.request.user)
 		obj = qs.first()
 		if obj == None:
