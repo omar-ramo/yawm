@@ -4,4 +4,5 @@ static_root/*
 **__pycache__/
 .env
 Procfile.windows
+yawm_.sublime-project
 yawm_.sublime-workspace
