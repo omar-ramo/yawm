@@ -22,11 +22,22 @@ import notifications.urls
 urlpatterns = [
     path('admin/', admin.site.urls),
     path(r'ckeditor/', include('ckeditor_uploader.urls')),
-    path('inbox/notifications/', include(notifications.urls, namespace='notifications')),
+    path(
+        'inbox/notifications/',
+        include(
+            notifications.urls,
+            namespace='notifications')),
     path('account/', include('accounts.urls', namespace='accounts')),
     path('', include('diaries.urls', namespace='diaries')),
 
 ]
 
-if settings.DEBUG==True:
-	urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+if settings.DEBUG is True:
+    urlpatterns += static(
+        settings.MEDIA_URL,
+        document_root=settings.MEDIA_ROOT)
+
+    import debug_toolbar
+    urlpatterns = [
+        path('__debug__/', include(debug_toolbar.urls)),
+    ] + urlpatterns
