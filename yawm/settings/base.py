@@ -150,3 +150,10 @@ CKEDITOR_CONFIGS = {
 ###################################
 
 DJANGO_NOTIFICATIONS_CONFIG = { 'SOFT_DELETE': True}
+
+from django.contrib.messages import constants as messages
+
+MESSAGE_TAGS = {
+    messages.SUCCESS: 'alert-success',
+    messages.WARNING: 'alert-warning'
+}
