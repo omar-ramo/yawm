@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.http import Http404
@@ -90,6 +91,7 @@ class DiaryCreateView(LoginRequiredMixin, CreateView):
 	context_object_name = 'diary'
 
 	def get_success_url(self):
+		messages.success(self.request, 'Your Diary was created successfly.')
 		return self.object.get_absolute_url()
 
 	def form_valid(self, form):
@@ -105,6 +107,7 @@ class DiaryUpdateView(LoginRequiredMixin, UpdateView):
 	context_object_name = 'diary'
 
 	def get_success_url(self):
+		messages.success(self.request, 'Your Diary was updated successfly.')
 		return self.object.get_absolute_url()
 
 	def get_object(self):
@@ -123,6 +126,7 @@ class DiaryDeleteView(LoginRequiredMixin, DeleteView):
 	slug_url_kwarg = 'diary_slug'
 
 	def get_success_url(self):
+		messages.warning(self.request, 'Your Diary was deleted successfly.')
 		return reverse('diaries:diary_list')
 
 	def get_object(self):
@@ -176,6 +180,7 @@ class CommentCreateView(LoginRequiredMixin, View):
 			new_comment.author = self.request.user.profile
 			new_comment.diary = diary
 			new_comment.save()
+			messages.success(self.request, 'Your comment was created successfly.')
 			return redirect(diary)
 		else:
 			return redirect(diary)
@@ -201,6 +206,7 @@ class CommentDeleteView(LoginRequiredMixin, DeleteView):
 		diary = get_object_or_404(
 			Diary,
 			slug=self.kwargs[self.diary_slug_url_kwarg])
+		messages.warning(self.request, 'Your comment was deleted successfly.')
 		return diary.get_absolute_url()
 
 
