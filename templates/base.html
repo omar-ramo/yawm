@@ -44,8 +44,7 @@
 					</form>
 					<div class="ml-4 collapse navbar-collapse" id="TopNavabar" style="margin-left: 20% !important;">
 						<ul class="navbar-nav">
-							{% with current_user=request.user %}
-							{% if current_user.is_authenticated %}
+							{% if request.user.is_authenticated %}
 								<li class="nav-item ml-2">
 									<a class="nav-link" href="{% url 'diaries:diary_create' %}">Write a new diary <span class="oi" data-glyph="pencil" title="pencil" aria-hidden="true"></span></a>
 								</li>
@@ -53,7 +52,7 @@
 									<a class="nav-link" href="{% url 'accounts:profile_list' %}">Interesting People <span class="oi" data-glyph="people" title="people" aria-hidden="true"></span></a>
 								</li>
 								<li class="nav-item ml-2">
-									{% with notifications=current_user.notifications.all|slice:":7" %}
+									{% with notifications=request.user.notifications.all|slice:":7" %}
 									<div class="dropdown">
 										<button class="btn dropdown-toggle" data-toggle="dropdown">
 											<span class="oi" data-glyph="bell" title="bell" aria-hidden="true"></span>
@@ -105,11 +104,11 @@
 								</li>
 								<li class="nav-item">
 									<div class="dropdown">
-										{% with profile=current_user.profile %}
+										{% with profile=request.user.profile %}
 										<img src="{% if profile.image %}{{ profile.image.url }}{% else %}{% static 'img/default_person_image.png' %}{% endif%}" class="img-fluid dropdown-toggle rounded-circle" data-toggle="dropdown" style="height: 40px !important;width: 40px !important;">
 										<div class="dropdown-menu">
-											<a href="{{ profile.get_absolute_url }}" class="dropdown-item">My Profile ({{ current_user.username }})  <span class="oi" data-glyph="person" title="person" aria-hidden="true"></span></a>	
-											<a href="{% url 'accounts:profile_update' current_user.username %}" class="dropdown-item">Update Profile <span class="oi" data-glyph="pencil" title="pencil" aria-hidden="true"></span></a>
+											<a href="{{ profile.get_absolute_url }}" class="dropdown-item">My Profile ({{ request.user.username }})  <span class="oi" data-glyph="person" title="person" aria-hidden="true"></span></a>	
+											<a href="{% url 'accounts:profile_update' request.user.username %}" class="dropdown-item">Update Profile <span class="oi" data-glyph="pencil" title="pencil" aria-hidden="true"></span></a>
 											<a href="{% url 'accounts:logout' %}" class="dropdown-item">Logout <span class="oi" data-glyph="account-logout" title="account logout" aria-hidden="true"></span></a>	
 										</div>
 										{% endwith %}
@@ -123,7 +122,6 @@
 									<a class="nav-link" href="{% url 'accounts:signup' %}">Signup <span class="oi" data-glyph="browser" title="browser" aria-hidden="true"></span></a>
 								</li>
 							{% endif %}
-						{% endwith %}
 						</ul>
 					</div>
 				</nav>
