@@ -17,11 +17,11 @@ class DiaryForm(forms.ModelForm):
 			'feeling',
 		]
 
-		def clean_content(self):
-			content = self.cleaned_data['content']
-			content = bleach.clean(content)
-			content = bleach.linkify(content)
-			return content
+	def clean_content(self):
+		content = self.cleaned_data['content']
+		content = bleach.clean(content)
+		content = bleach.linkify(content)
+		return content
 
 
 class CommentForm(forms.ModelForm):
