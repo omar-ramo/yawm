@@ -15,14 +15,13 @@ class DiaryForm(forms.ModelForm):
 			'is_visible',
 			'is_commentable',
 			'feeling',
-			]
+		]
 
 		def clean_content(self):
 			content = self.cleaned_data['content']
 			content = bleach.clean(content)
 			content = bleach.linkify(content)
 			return content
-
 
 
 class CommentForm(forms.ModelForm):
