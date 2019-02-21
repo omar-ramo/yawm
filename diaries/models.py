@@ -3,6 +3,7 @@ from django.db.models import Count, F, Q
 from django.db.models.signals import post_save, post_delete
 from django.utils.text import slugify
 from django.urls import reverse
+from django.utils.html import strip_tags
 from ckeditor_uploader.fields import RichTextUploadingField
 from notifications.models import Notification
 from notifications.signals import notify
@@ -131,7 +132,7 @@ class Diary(models.Model):
                     generate_random_string())
 
             self.slug = new_slug
-        self.description = ' '.join(self.content[:255].split(' ')[:-1])
+        self.description = strip_tags(self.content)[:255]
         return super(Diary, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
