@@ -103,8 +103,7 @@ class ProfileDetailView(DetailView):
 
     def get_context_data(self, *args, **kwargs):
         cx = super().get_context_data(*args, **kwargs)
-        cx['diaries'] = self.object.written_diaries\
-            .with_likes_and_comments_count().active(self.request.user)
+        cx['diaries'] = self.object.written_diaries.active(self.request.user)
         return cx
 
 
