@@ -1,6 +1,5 @@
 from django import forms
 import bleach
-from ckeditor_uploader.widgets import CKEditorUploadingWidget
 
 from .models import Diary, Comment
 

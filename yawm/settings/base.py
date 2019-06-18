@@ -13,7 +13,8 @@ https://docs.djangoproject.com/en/2.1/ref/settings/
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+BASE_DIR = os.path.dirname(os.path.dirname(
+    os.path.dirname(os.path.abspath(__file__))))
 
 
 # Quick-start development settings - unsuitable for production
@@ -29,11 +30,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    #Local apps
+    # Local apps
     'core',
     'accounts',
     'diaries',
-    #Third Party
+    # Third Party
     'crispy_forms',
     'ckeditor',
     'ckeditor_uploader',
@@ -73,7 +74,6 @@ WSGI_APPLICATION = 'yawm.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
-
 
 
 # Password validation
@@ -129,27 +129,29 @@ LOGIN_URL = 'accounts:login'
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
 ####################################
-    ##  CKEDITOR CONFIGURATION ##
+##  CKEDITOR CONFIGURATION ##
 ####################################
- 
+
 CKEDITOR_JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js'
- 
+
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 CKEDITOR_IMAGE_BACKEND = "pillow"
- 
+CKEDITOR_RESTRICT_BY_USER = True
+
 CKEDITOR_CONFIGS = {
     'default': {
         'toolbar': [["Format", "Bold", "Italic", "Underline", "Strike", "SpellChecker"],
-                ['NumberedList', 'BulletedList', "Indent", "Outdent", 'JustifyLeft', 'JustifyCenter',
-                 'JustifyRight', 'JustifyBlock'],
-                ["Image", "Table", "Link", "Unlink", "Anchor", "SectionLink", "Subscript", "Superscript"], ['Undo', 'Redo'], ["Source"],
-                ["Maximize"]],
+                    ['NumberedList', 'BulletedList', "Indent", "Outdent", 'JustifyLeft', 'JustifyCenter',
+                     'JustifyRight', 'JustifyBlock'],
+                    ["Image", "Table", "Link", "Unlink", "Anchor", "SectionLink",
+                        "Subscript", "Superscript"], ['Undo', 'Redo'], ["Source"],
+                    ["Maximize"]],
     },
 }
- 
+
 ###################################
 
-DJANGO_NOTIFICATIONS_CONFIG = { 'SOFT_DELETE': True}
+DJANGO_NOTIFICATIONS_CONFIG = {'SOFT_DELETE': True}
 
 from django.contrib.messages import constants as messages
 
