@@ -17,3 +17,7 @@ for production:
 -  **django-storages + dropbox**: Where i store media files.
 
 Well, there is much more to go.
+
+### To run it locally:
+`python manage migrate --settings=yawm.settings.dev`
+`python manage runserver --settings=yawm.settings.dev`
