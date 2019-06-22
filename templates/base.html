@@ -2,6 +2,7 @@
 <html lang="en">
 {% load static %}
 {% load notifications_tags %}
+{% load thumbnail %}
 <head>
 	<title>{% block title %}MyDay{% endblock %}</title>
 	<meta charset="utf-8">
@@ -105,7 +106,7 @@
 								<li class="nav-item">
 									<div class="dropdown">
 										{% with profile=request.user.profile %}
-										<img src="{% if profile.image %}{{ profile.image.url }}{% else %}{% static 'img/default_person_image.png' %}{% endif%}" class="img-fluid dropdown-toggle rounded-circle" data-toggle="dropdown" style="height: 40px !important;width: 40px !important;">
+										<img src="{% if profile.image %}{% thumbnail profile.image '50x50' crop='center' as img %}{{ img.url }}{% endthumbnail %}{% else %}{% static 'img/default_person_image.png' %}{% endif%}" class="img-fluid dropdown-toggle rounded-circle" data-toggle="dropdown">
 										<div class="dropdown-menu">
 											<a href="{{ profile.get_absolute_url }}" class="dropdown-item">My Profile ({{ request.user.username }})  <span class="oi" data-glyph="person" title="person" aria-hidden="true"></span></a>	
 											<a href="{% url 'accounts:profile_update' request.user.username %}" class="dropdown-item">Update Profile <span class="oi" data-glyph="pencil" title="pencil" aria-hidden="true"></span></a>
