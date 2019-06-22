@@ -1,4 +1,5 @@
 {% load static %}
+{% load thumbnail %}
 <div class="row">
 	{% for diary in diaries %}
 		<div class="col-md-4 diary-item mt-4">
@@ -6,7 +7,8 @@
 				<!-- Diary Metadat Start -->
 				<div class="media">
 					<a href="{{ diary.author.get_absolute_url }}">
-						<img src="{% if diary.author.image %}{{ diary.author.image.url }}{% else %}{% static 'img/default_person_image.png' %}{% endif%}" class="img-fluid rounded-circle author-metadata-image mt-2">
+
+						<img src="{% if diary.author.image %}{% thumbnail diary.author.image '50x50' crop='center' as img %}{{ img.url }}{% endthumbnail %}{% else %}{% static 'img/default_person_image.png' %}{% endif%}" class="img-fluid rounded-circle">
 					</a>
 					<div class="media-body ml-2">
 							<a href="{{ diary.author.get_absolute_url }}">
@@ -30,7 +32,9 @@
 					{% if diary.image %}
 					<div class="card-image">
 						<a href="{{ diary.get_absolute_url }}">
-							<img src="{{ diary.image.url }}" class="img-fluid">
+							{% thumbnail diary.image '350x180' crop='center' as img %}
+							<img src="{{ img.url }}" class="img-fluid">
+							{% endthumbnail %}
 						</a>
 					</div>
 					{% endif %}
