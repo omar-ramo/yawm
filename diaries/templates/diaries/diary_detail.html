@@ -21,10 +21,10 @@
 			{% if request.user.profile == diary.author %}
 				<p class="float-right mt-2">
 					<a href="{% url 'diaries:diary_update' diary.slug %}" class="btn btn-info">
-						edit <span class="oi" data-glyph="pencil" title="pencil" aria-hidden="true"></span>
+						<span class="oi" data-glyph="pencil" title="pencil" aria-hidden="true"></span>
 					</a>
 					<a href="{% url 'diaries:diary_delete' diary.slug %}" class="btn btn-danger">
-						delete <span class="oi" data-glyph="trash" title="trash" aria-hidden="true"></span>
+						<span class="oi" data-glyph="trash" title="trash" aria-hidden="true"></span>
 					</a>
 				</p>
 			{% endif %}
@@ -48,7 +48,9 @@
 				</div>
 				<div class="col-sm-2">
 					<div class="dropdown">
-						<button class="btn btn-body dropdown-toggle" data-toggle="dropdown">Share <span class="oi" data-glyph="share" title="share" aria-hidden="true"></span></button>
+						<button class="btn btn-body dropdown-toggle" data-toggle="dropdown">
+							<span class="oi" data-glyph="fork" title="fork" aria-hidden="true"></span>
+						</button>
 						<div class="dropdown-menu">
 							<div class="dropdown-header">Share this diary</div>
 							<a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri  }}&title={{ diary.title|iriencode }}" class="dropdown-item" target="_blank" rel="nofollow">facebook</a>
@@ -88,7 +90,9 @@
 			</div>
 			<div class="col text-center">
 				<div class="dropdown">
-					<button class="btn btn-body dropdown-toggle" data-toggle="dropdown">Share</button>
+					<button class="btn btn-body dropdown-toggle" data-toggle="dropdown">
+						<span class="oi" data-glyph="fork" title="fork" aria-hidden="true"></span>
+					</button>
 					<div class="dropdown-menu">
 						<div class="dropdown-header">Share this diary</div>
 						<a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri  }}&title={{ diary.title|iriencode }}" class="dropdown-item" target="_blank" rel="nofollow">facebook</a>
@@ -108,7 +112,9 @@
 					<small class="d-inline-block mr-3">{{ comment.created_on|timesince }} ago</small>
 					{% if request.user.profile == comment.author %}
 					<span class="right">
-						<a href="{% url 'diaries:comment_delete' diary.slug comment.id %}">delete <span class="oi" data-glyph="trash" title="trash" aria-hidden="true"></span></a>
+						<a href="{% url 'diaries:comment_delete' diary.slug comment.id %}">
+							<span class="oi" data-glyph="trash" title="trash" aria-hidden="true"></span>
+						</a>
 					</span>
 					{% endif %}
 					<p>{{ comment.content|linebreaksbr }}</p>

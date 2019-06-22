@@ -8,21 +8,23 @@
 				<div class="media">
 					<a href="{{ diary.author.get_absolute_url }}">
 
-						<img src="{% if diary.author.image %}{% thumbnail diary.author.image '50x50' crop='center' as img %}{{ img.url }}{% endthumbnail %}{% else %}{% static 'img/default_person_image.png' %}{% endif%}" class="img-fluid rounded-circle">
+						<img src="{% if diary.author.image %}{% thumbnail diary.author.image '50x50' crop='center' as img %}{{ img.url }}{% endthumbnail %}{% else %}{% static 'img/default_person_image.png' %}{% endif%}" class="img-fluid rounded-circle mr-2">
 					</a>
 					<div class="media-body ml-2">
 							<a href="{{ diary.author.get_absolute_url }}">
 								<h5 class="d-inline-block">{{ diary.author }}</h5>
 							</a>
 							<div class="dropdown d-inline-block float-right">
-								<button class="btn dropdown-toggle float-left" data-toggle="dropdown">Share  <span class="oi" data-glyph="share" title="share" aria-hidden="true"></span></button>
+								<button class="btn dropdown-toggle float-left" data-toggle="dropdown">
+									<span class="oi" data-glyph="fork" title="fork" aria-hidden="true"></span>
+								</button>
 								<div class="dropdown-menu">
 									<div class="dropdown-header">Share this diary</div>
 									<a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri  }}&title={{ diary.title|iriencode }}" class="dropdown-item" target="_blank" rel="nofollow">facebook</a>
 									<a href="#!" class="dropdown-item">twitter</a>
 								</div>
 							</div>
-							<p>Published <b>{{ diary.created_on|timesince }}</b> ago</p>
+							<p><span class="oi" data-glyph="pencil" title="pencil" aria-hidden="true"></span> <b>{{ diary.created_on|timesince }}</b> ago</p>
 					</div>
 				</div>
 				<!-- Diary Metadat End -->
