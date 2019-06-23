@@ -1,3 +1,4 @@
+import bleach
 from django.db import models
 from django.db.models import Count, F, Q
 from django.db.models.signals import post_save, post_delete
@@ -132,7 +133,28 @@ class Diary(models.Model):
                     generate_random_string())
 
             self.slug = new_slug
-        self.description = strip_tags(self.content)[:255]
+
+        # self.description is supposed to be plain text so that it's displayed
+        # in the diary list page
+        start_position = 500
+        end_position = len(self.content)
+        plain_text_description = bleach.clean(
+            self.content[:start_position],
+            strip=True,
+            tags=[],
+            attributes=[]
+        ).strip()
+        # If 500 non-clean characters is not enough, add 10 every time
+        while len(plain_text_description) < 245 & start_position < end_position:
+            plain_text_description +=  bleach.clean(
+                self.content[start_position:start_position + 10],
+                strip=True,
+                tags=[],
+                attributes=[]
+            ).strip()
+            start_position += 10
+        self.description = plain_text_description[:255]
+
         return super(Diary, self).save(*args, **kwargs)
 
     def get_absolute_url(self):
