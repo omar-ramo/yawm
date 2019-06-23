@@ -1,5 +1,5 @@
 from django import forms
-import bleach
+from bleach.sanitizer import Cleaner
 
 from .models import Diary, Comment
 
@@ -18,8 +18,23 @@ class DiaryForm(forms.ModelForm):
 
     def clean_content(self):
         content = self.cleaned_data['content']
-        content = bleach.clean(content)
-        content = bleach.linkify(content)
+        cleaner = Cleaner(
+            tags=[
+                'p', 'u', 's', 'i', 'b', 'a', 'sub', 'sup', 'img', 'div',
+                'ul', 'li', 'ol', 'table', 'tr', 'thead', 'th', 'tbody',
+                'td', 'em', 'strong', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+                'pre', 'address', 'caption'
+            ],
+            attributes={
+                'a':['href', 'target'],
+                'img':['src', 'style', 'alt'],
+                'table':['align', 'border', 'cellspacing', 'style', 'summary'],
+                'th':['scop']
+            },
+            styles=['height', 'width'],
+            protocols=['http', 'https', 'mailto']
+        )
+        content = cleaner.clean(content)
         return content
 
 
