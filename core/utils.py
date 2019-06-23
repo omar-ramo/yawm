@@ -13,3 +13,9 @@ def get_image_upload_path(instance, filename):
     file_extention = filename.split('.')[-1]
     new_file_name = '{}/{}.{}'.format(app_name, uuid4(), file_extention)
     return new_file_name
+
+
+def get_ckeditor_image_upload_path(filename):
+    file_extention = filename.split('.')[-1]
+    new_file_name = '{}.{}'.format(uuid4(), file_extention)
+    return new_file_name

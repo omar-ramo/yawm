@@ -138,15 +138,18 @@ CKEDITOR_JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 CKEDITOR_IMAGE_BACKEND = "pillow"
 CKEDITOR_RESTRICT_BY_USER = True
+CKEDITOR_FILENAME_GENERATOR = 'core.utils.get_ckeditor_image_upload_path'
+CKEDITOR_ALLOW_NONIMAGE_FILES = False
 
 CKEDITOR_CONFIGS = {
     'default': {
-        'toolbar': [["Format", "Bold", "Italic", "Underline", "Strike", "SpellChecker"],
-                    ['NumberedList', 'BulletedList', "Indent", "Outdent", 'JustifyLeft', 'JustifyCenter',
-                     'JustifyRight', 'JustifyBlock'],
-                    ["Image", "Table", "Link", "Unlink", "Anchor", "SectionLink",
-                        "Subscript", "Superscript"], ['Undo', 'Redo'], ["Source"],
-                    ["Maximize"]],
+        'toolbar': [
+            ["Format", "Bold", "Italic", "Underline", "Strike", "SpellChecker"],
+            ['NumberedList', 'BulletedList', "Indent", "Outdent",
+             'JustifyLeft', 'JustifyCenter','JustifyRight', 'JustifyBlock'],
+            ["Image", "Table", "Link", "Unlink", "Anchor", "SectionLink",
+                "Subscript", "Superscript"], ['Undo', 'Redo'], ["Source"],
+            ["Maximize"]],
     },
 }
 
