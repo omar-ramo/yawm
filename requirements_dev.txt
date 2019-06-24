@@ -1,2 +1,1 @@
 -r requirements_base.txt
-django-debug-toolbar==1.11
