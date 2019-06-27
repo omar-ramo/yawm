@@ -16,12 +16,14 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.contrib.auth.decorators import login_required
 from django.urls import path, include
+from django.views.decorators.cache import never_cache
 import notifications.urls
+from ckeditor_uploader import views as ckeditor_uploader_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('ckeditor/', include('ckeditor_uploader.urls')),
     path(
         'inbox/notifications/',
         include(
@@ -29,6 +31,19 @@ urlpatterns = [
             namespace='notifications')),
     path('account/', include('accounts.urls', namespace='accounts')),
     path('', include('diaries.urls', namespace='diaries')),
+
+    path('ckeditor/', include([
+        path(
+            'upload/',
+            login_required(ckeditor_uploader_views.upload),
+            name='ckeditor_upload'
+        ),
+        path(
+            'browse/',
+            login_required(never_cache(ckeditor_uploader_views.browse)),
+            name='ckeditor_browse'
+        ),
+    ]))
 
 ]
 
