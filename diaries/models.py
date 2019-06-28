@@ -2,6 +2,7 @@ import bleach
 from django.db import models
 from django.db.models import Count, F, Q
 from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
 from django.utils.text import slugify
 from django.urls import reverse
 from django.utils.html import strip_tags
@@ -11,6 +12,7 @@ from notifications.signals import notify
 
 from accounts.models import Profile
 from core.utils import get_image_upload_path, generate_random_string
+from .utils import delete_ckeditor_rich_text_images
 
 
 class DiaryQuerySet(models.QuerySet):
@@ -162,6 +164,11 @@ class Diary(models.Model):
             'diaries:diary_detail',
             kwargs={'diary_slug': self.slug})
 
+@receiver(post_delete, sender=Diary)
+def diary_pictures_delete(sender, instance, **kwargs):
+    instance.image.delete(False)
+    delete_ckeditor_rich_text_images(instance.content)
+
 
 class DiaryLike(models.Model):
     user = models.ForeignKey(
@@ -224,6 +231,7 @@ class CommentLike(models.Model):
             self.created_on)
 
 
+@receiver(post_save, sender=DiaryLike)
 def diary_like_create_handler(sender, instance, created, **kwargs):
     if instance.user != instance.diary.author:
         notify.send(
@@ -233,9 +241,7 @@ def diary_like_create_handler(sender, instance, created, **kwargs):
             verb='Liked')
 
 
-post_save.connect(diary_like_create_handler, sender=DiaryLike)
-
-
+@receiver(post_save, sender=Comment)
 def comment_create_handler(sender, instance, created, **kwargs):
     if instance.author != instance.diary.author:
         notify.send(
@@ -245,12 +251,7 @@ def comment_create_handler(sender, instance, created, **kwargs):
             verb='Commented on')
 
 
-post_save.connect(comment_create_handler, sender=Comment)
-
-
+@receiver(post_delete, sender=Diary)
 def delete_notifications_when_diary_is_deleted(sender, instance, **kwargs):
     qs = Notification.objects.filter(target_object_id=instance.id)
     qs.delete()
-
-
-post_delete.connect(delete_notifications_when_diary_is_deleted, sender=Diary)
