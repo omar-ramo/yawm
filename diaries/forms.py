@@ -21,15 +21,12 @@ class DiaryForm(forms.ModelForm):
         cleaner = Cleaner(
             tags=[
                 'p', 'u', 's', 'i', 'b', 'a', 'sub', 'sup', 'img', 'div',
-                'ul', 'li', 'ol', 'table', 'tr', 'thead', 'th', 'tbody',
-                'td', 'em', 'strong', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+                'ul', 'li', 'ol', 'em', 'strong', 'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
                 'pre', 'address', 'caption'
             ],
             attributes={
                 'a':['href', 'target'],
                 'img':['src', 'style', 'alt'],
-                'table':['align', 'border', 'cellspacing', 'style', 'summary'],
-                'th':['scop']
             },
             styles=['height', 'width'],
             protocols=['http', 'https', 'mailto']
