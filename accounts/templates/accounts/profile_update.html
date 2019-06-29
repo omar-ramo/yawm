@@ -4,6 +4,9 @@
 
 {% block content %}
 	<h2>Update Profile:</h2>
+	<p>
+		<a href="{% url 'account_change_password' %}">Change my password</a>
+	</p>
 	<form method="post" action="{% url 'accounts:profile_update' request.user.username %}" enctype="multipart/form-data">
 		{% csrf_token %}
 		{% include 'core/snippets/form_fields.html' with form=form %}
