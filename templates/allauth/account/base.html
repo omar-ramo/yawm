@@ -1,1 +1,13 @@
 {% extends "base.html" %}
+
+{% block title %}
+	{{ block.super }}
+	{% block head_title %}{% endblock %}
+{% endblock %}
+
+{% block body %}
+	{{ block.super }}
+	<div class="container">
+	{% block content %}{% endblock %}
+	</div>
+{% endblock %}
