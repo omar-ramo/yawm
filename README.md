@@ -8,6 +8,7 @@ It's just like a blog application. but here it's intended as a place where users
 -  **django-crispy-forms**: To render forms
 -  **django-notification-hq**: To manage notifications
 -  **bleach**: To clean and linkfy diary content
+-  **sorl-thumbnail**: to generate thumbnails for images.
 -  ...
 
 for production:
@@ -19,5 +20,10 @@ for production:
 Well, there is much more to go.
 
 ### To run it locally:
-`python manage migrate --settings=yawm.settings.dev`
-`python manage runserver --settings=yawm.settings.dev`
+- download or clone the repo
+- create a virtual environment
+- `cp .env.example .env`
+- `pip install requirements.txt`
+- `python manage migrate --settings=yawm.settings.dev`
+- `python manage runserver --settings=yawm.settings.dev`
+ 
