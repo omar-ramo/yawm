@@ -30,7 +30,7 @@ urlpatterns = [
             notifications.urls,
             namespace='notifications')),
     path('account/', include('accounts.urls', namespace='accounts')),
-    path('', include('diaries.urls', namespace='diaries')),
+    path('auth/', include('allauth.urls')),
 
     path('ckeditor/', include([
         path(
@@ -43,7 +43,8 @@ urlpatterns = [
             login_required(never_cache(ckeditor_uploader_views.browse)),
             name='ckeditor_browse'
         ),
-    ]))
+    ])),
+    path('', include('diaries.urls', namespace='diaries')),
 
 ]
 

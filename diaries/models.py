@@ -1,11 +1,10 @@
 import bleach
 from django.db import models
-from django.db.models import Count, F, Q
+from django.db.models import F, Q
 from django.db.models.signals import post_save, post_delete
 from django.dispatch import receiver
 from django.utils.text import slugify
 from django.urls import reverse
-from django.utils.html import strip_tags
 from ckeditor_uploader.fields import RichTextUploadingField
 from notifications.models import Notification
 from notifications.signals import notify
@@ -147,8 +146,9 @@ class Diary(models.Model):
             attributes=[]
         ).strip()
         # If 500 non-clean characters is not enough, add 10 every time
-        while len(plain_text_description) < 245 & start_position < end_position:
-            plain_text_description +=  bleach.clean(
+        while len(plain_text_description) < 245 \
+                & start_position < end_position:
+            plain_text_description += bleach.clean(
                 self.content[start_position:start_position + 10],
                 strip=True,
                 tags=[],
@@ -163,6 +163,7 @@ class Diary(models.Model):
         return reverse(
             'diaries:diary_detail',
             kwargs={'diary_slug': self.slug})
+
 
 @receiver(post_delete, sender=Diary)
 def diary_pictures_delete(sender, instance, **kwargs):
