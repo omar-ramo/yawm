@@ -1,10 +1,11 @@
 {% load static %}
+{% load thumbnail %}
 
 <div class="row">
 	{% for profile in profiles %}
 		<div class="col-md-3 text-center">
 			<a href="{{ profile.get_absolute_url }}">
-				<img src="{% if profile.image %}{{ profile.image.url }}{% else %}{% static 'img/default_person_image.png' %}{% endif%}" class="img-fluid rounded-circle author-metadata-image">
+				<img src="{% if profile.image %}{% thumbnail profile.image '50x50' crop='center' as img %}{{ img.url }}{% endthumbnail %}{% else %}{% static 'img/default_person_image.png' %}{% endif%}" class="img-fluid rounded-circle author-metadata-image">
 				<h5>{{ profile.name }}</h5>
 			</a>
 			{% if request.user.profile == profile %}
