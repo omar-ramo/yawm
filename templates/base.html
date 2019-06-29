@@ -43,8 +43,8 @@
 							</div>
 						</div>
 					</form>
-					<div class="ml-4 collapse navbar-collapse" id="TopNavabar" style="margin-left: 20% !important;">
-						<ul class="navbar-nav">
+					<div class="collapse navbar-collapse" id="TopNavabar">
+						<ul class="navbar-nav" style="margin-left: auto;">
 							{% if request.user.is_authenticated %}
 								<li class="nav-item ml-2">
 									<a class="nav-link" href="{% url 'diaries:diary_create' %}">Write a new diary <span class="oi" data-glyph="pencil" title="pencil" aria-hidden="true"></span></a>
