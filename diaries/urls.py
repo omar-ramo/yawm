@@ -1,5 +1,4 @@
 from django.urls import path, include
-from notifications.views import NotificationViewList
 
 from . import views
 

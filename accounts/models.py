@@ -4,7 +4,7 @@ from django.db.models import Count, F
 from django.db.models.signals import post_save
 from django.urls import reverse
 
-from core.utils import get_image_upload_path, generate_random_string
+from core.utils import get_image_upload_path
 
 
 class ProfileQuerySet(models.QuerySet):
@@ -17,8 +17,7 @@ class ProfileQuerySet(models.QuerySet):
     def top(self):
         qs = self.with_diaries_followers_count()
         qs = qs.annotate(
-            interactions=F('written_diaries_count')
-            + F('followers_count')
+            interactions=F('written_diaries_count') + F('followers_count')
         ).order_by('-interactions')
         return qs
 

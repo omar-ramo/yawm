@@ -1,10 +1,8 @@
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import Http404, HttpResponseForbidden
-from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse
+from django.http import Http404
+from django.shortcuts import get_object_or_404, redirect
 from django.views.generic import (
     View,
-    CreateView,
     DetailView,
     ListView,
     UpdateView
@@ -13,7 +11,6 @@ from notifications.signals import notify
 
 from .forms import ProfileForm
 from .models import Profile
-from diaries.models import Diary
 
 
 class ProfileUpdateView(LoginRequiredMixin, UpdateView):

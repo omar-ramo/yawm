@@ -20,6 +20,6 @@ urlpatterns = [
                  'follow',
                  views.ProfileFollowView.as_view(),
                  name='profile_follow'),
-        ])
-    )
+         ])
+         )
 ]
