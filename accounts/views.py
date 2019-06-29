@@ -1,5 +1,3 @@
-from django.contrib.auth import views as auth_views
-from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import Http404, HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404, redirect
@@ -16,19 +14,6 @@ from notifications.signals import notify
 from .forms import ProfileForm
 from .models import Profile
 from diaries.models import Diary
-
-
-class LoginView(auth_views.LoginView):
-    template_name = 'accounts/login.html'
-    redirect_authenticated_user = True
-
-
-class SignupView(CreateView):
-    form_class = UserCreationForm
-    template_name = 'accounts/signup.html'
-
-    def get_success_url(self):
-        return reverse('accounts:login')
 
 
 class ProfileUpdateView(LoginRequiredMixin, UpdateView):
