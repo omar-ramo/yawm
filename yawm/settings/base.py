@@ -30,6 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
     # Local apps
     'core',
     'accounts',
@@ -40,6 +41,9 @@ INSTALLED_APPS = [
     'ckeditor_uploader',
     'notifications',
     'sorl.thumbnail',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
 ]
 
 MIDDLEWARE = [
@@ -57,7 +61,10 @@ ROOT_URLCONF = 'yawm.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'templates'),
+            os.path.join(BASE_DIR, 'templates', 'allauth')
+        ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -125,16 +132,23 @@ STATICFILES_DIRS = [
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-LOGOUT_REDIRECT_URL = 'accounts:login'
+# DJANGO ALLAUTH CONFIG
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+ACCOUNT_AUTHENTICATION_METHOD = 'username_email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+ACCOUNT_EMAIL_VERIFICATION = 'optional'
+LOGIN_URL = 'account_login'
 LOGIN_REDIRECT_URL = 'diaries:diary_list'
-LOGIN_URL = 'accounts:login'
+LOGOUT_REDIRECT_URL = 'account_login'
 
+# CRISPY FORMS
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
-####################################
-##  CKEDITOR CONFIGURATION ##
-####################################
-
+# CKEDITOR CONFIGURATION
 CKEDITOR_JQUERY_URL = 'https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js'
 CKEDITOR_UPLOAD_PATH = 'uploads/'
 CKEDITOR_IMAGE_BACKEND = "pillow"
@@ -154,8 +168,6 @@ CKEDITOR_CONFIGS = {
         'width': 'auto',
     },
 }
-
-###################################
 
 DJANGO_NOTIFICATIONS_CONFIG = {'SOFT_DELETE': True}
 
