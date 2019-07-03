@@ -61,7 +61,7 @@
 												<span class="badge badge-info">{% notifications_unread %}</span>
 											{% endif %}
 										</button>
-										<div class="dropdown-menu dropdown-menu-right w-2">
+										<div class="dropdown-menu dropdown-menu-right w-2" style="font-size: small;padding-right: 15px;">
 											<div class="dropdown-header">
 												You have <b>{% notifications_unread %}</b> unread notifications.
 												<a href="{% url 'notifications:mark_all_as_read' %}?next={{ request.path }}">Mark all as read</a>
@@ -72,13 +72,12 @@
 												{% else %}
 												<div class="dropdown-item mt-1">
 												{% endif %}
-													<p>
+													<p style="font-size: 12px;">
 														<img src="{% if n.actor.image %}{% thumbnail n.actor.image '50x50' crop='center' as img %}{{ img.url }}{% endthumbnail %}{% else %}{% static 'img/default_person_image.png' %}{% endif%}" class="img-fluid rounded-circle" style="height: 30px; width: 30px;">
 														<a href="{{ n.actor.get_absolute_url }}">{{ n.actor }}</a> <b>{{ n.verb }}</b>
 														{% if n.target %}
 														<a href="{{ n.target.get_absolute_url }}">{{ n.target }}</a>
 														{% endif %}
-														<i>{{ n.timestamp|timesince }} ago</i>
 
 												{% if n.unread  %}
 													<a href="{% url 'notifications:mark_as_read' slug=n.slug %}?next={{ request.path }}">
@@ -89,8 +88,8 @@
 														<span class="oi" data-glyph="action-undo" title="Mark as unread" aria-hidden="tru"></span>
 													</a>
 												{% endif %}
-														
-														
+														<br>
+														<i class="d-inline-block" style="margin-left: 35px;">{{ n.timestamp|timesince }} ago</i>
 													</p>
 												</div>
 											{% empty %}
