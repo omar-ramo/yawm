@@ -107,19 +107,34 @@
 										{% with profile=request.user.profile %}
 										<img src="{% if profile.image %}{% thumbnail profile.image '50x50' crop='center' as img %}{{ img.url }}{% endthumbnail %}{% else %}{% static 'img/default_person_image.png' %}{% endif%}" class="img-fluid dropdown-toggle rounded-circle" data-toggle="dropdown">
 										<div class="dropdown-menu">
-											<a href="{{ profile.get_absolute_url }}" class="dropdown-item">My Profile ({{ request.user.username }})  <span class="oi" data-glyph="person" title="person" aria-hidden="true"></span></a>	
-											<a href="{% url 'accounts:profile_update' request.user.username %}" class="dropdown-item">Update Profile <span class="oi" data-glyph="pencil" title="pencil" aria-hidden="true"></span></a>
-											<a href="{% url 'account_logout' %}" class="dropdown-item">Logout <span class="oi" data-glyph="account-logout" title="account logout" aria-hidden="true"></span></a>	
+											<a href="{{ profile.get_absolute_url }}" class="dropdown-item">
+												My Profile ({{ request.user.username }}) 
+												<span class="oi" data-glyph="person" title="person" aria-hidden="true"></span>
+											</a>	
+											<a href="{% url 'accounts:profile_update' request.user.username %}" class="dropdown-item">
+												Update Profile 
+												<span class="oi" data-glyph="pencil" title="pencil" aria-hidden="true"></span>
+											</a>
+											<a href="{% url 'account_logout' %}" class="dropdown-item">
+												Logout 
+												<span class="oi" data-glyph="account-logout" title="account logout" aria-hidden="true"></span>
+											</a>	
 										</div>
 										{% endwith %}
 									</div>
 								</li>
 							{% else %}
 								<li class="nav-item">
-									<a class="nav-link" href="{% url 'account_login' %}">Login <span class="oi" data-glyph="account-login" title="account login" aria-hidden="true"></span></a>
+									<a class="nav-link" href="{% url 'account_login' %}">
+										Login 
+										<span class="oi" data-glyph="account-login" title="account login" aria-hidden="true"></span>
+									</a>
 								</li>
 								<li class="nav-item">
-									<a class="nav-link" href="{% url 'account_signup' %}">Signup <span class="oi" data-glyph="browser" title="browser" aria-hidden="true"></span></a>
+									<a class="nav-link" href="{% url 'account_signup' %}">
+										Signup 
+										<span class="oi" data-glyph="browser" title="browser" aria-hidden="true"></span>
+									</a>
 								</li>
 							{% endif %}
 						</ul>

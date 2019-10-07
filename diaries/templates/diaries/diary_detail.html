@@ -133,7 +133,7 @@
 					</form>
 				</div>
 			{% else %}
-				<p>Please <a href="{% url 'accounts:login' %}?next={{ request.path }}">login</a> to comment.</p>
+				<p>Please <a href="{% url 'account_login' %}?next={{ request.path }}">login</a> to comment.</p>
 			{% endif %}
 		{% else %}
 			<p>Comments are disabled for this diary.</p>
