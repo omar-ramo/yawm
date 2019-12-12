@@ -1,6 +1,7 @@
 from random import choice
 import string
 from uuid import uuid4
+from os.path import sep as os_sep
 
 
 def generate_random_string(
@@ -11,11 +12,11 @@ def generate_random_string(
 def get_image_upload_path(instance, filename):
     app_name = instance.__class__._meta.app_label
     file_extention = filename.split('.')[-1]
-    new_file_name = '{}/{}.{}'.format(app_name, uuid4(), file_extention)
+    new_file_name = '{}{}_{}.{}'.format(os_sep, app_name, uuid4(), file_extention)
     return new_file_name
 
 
 def get_ckeditor_image_upload_path(filename):
     file_extention = filename.split('.')[-1]
-    new_file_name = '/{}.{}'.format(uuid4(), file_extention)
+    new_file_name = '{}{}.{}'.format(os_sep, uuid4(), file_extention)
     return new_file_name
