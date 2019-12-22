@@ -80,7 +80,8 @@ class DiaryDetailView(DetailView):
 
         comment_form = None
         if self.object.is_commentable == Diary.ALL_CHOICE:
-            comment_form = CommentForm()
+            if self.request.user.is_authenticated:
+                comment_form = CommentForm()
         cx['comment_form'] = comment_form
 
         return cx
