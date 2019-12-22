@@ -200,6 +200,20 @@ class DiaryDetailViewTest(TestCase):
             kwargs={'diary_slug': DiaryDetailViewTest.diary2.slug}
         )
 
+        cls.diary3 = Diary(
+            title=f'Diary By profile2',
+            content=f'Content of diary',
+            feeling=Diary.EXCITED_FEELING,
+            author=cls.profile2,
+            is_commentable=Diary.NO_ONE_CHOICE
+        )
+        cls.diary3.save()
+
+        cls.diary3_detail_url = reverse(
+            'diaries:diary_detail',
+            kwargs={'diary_slug': DiaryDetailViewTest.diary3.slug}
+        )
+
     def test_view_url_is_accessible_by_name(self):
         response = self.client.get(DiaryDetailViewTest.diary1_detail_url)
         self.assertEqual(response.status_code, 200)
@@ -235,7 +249,7 @@ class DiaryDetailViewTest(TestCase):
         with self.assertRaises(KeyError):
             response.context['diary']
 
-    def test_logged_in_user_can_see_comment_form(self):
+    def test_logged_in_user_can_see_comment_form_on_commentable_diary(self):
         self.client.login(username='user1', password='user1pass')
         response = self.client.get(DiaryDetailViewTest.diary1_detail_url)
         comment_url = reverse(
@@ -246,3 +260,39 @@ class DiaryDetailViewTest(TestCase):
             f'<form method="post" action="{comment_url}">'
         )
         self.assertIsInstance(response.context['comment_form'], CommentForm)
+
+    def test_unlogged_in_user_can_see_comment_form_on_commentable_diary(self):
+        response = self.client.get(DiaryDetailViewTest.diary1_detail_url)
+        comment_url = reverse(
+            'diaries:comment_create',
+            args=[DiaryDetailViewTest.diary1.slug])
+        self.assertNotContains(
+            response,
+            f'<form method="post" action="{comment_url}">'
+        )
+        self.assertEqual(response.context['comment_form'], None)
+
+    def test_user_wont_see_comment_form_on_non_commentable_diary(self):
+        self.client.login(username='user2', password='user2pass')
+        response = self.client.get(DiaryDetailViewTest.diary3_detail_url)
+        comment_url = reverse(
+            'diaries:comment_create',
+            args=[DiaryDetailViewTest.diary3.slug])
+        self.assertNotContains(
+            response,
+            f'<form method="post" action="{comment_url}">'
+        )
+        self.assertEqual(response.context['comment_form'], None)
+        self.assertContains(response, 'Comments are disabled for this diary.')
+
+    def test_unlogged_user_wont_see_comment_form_non_commentable_diary(self):
+        response = self.client.get(DiaryDetailViewTest.diary3_detail_url)
+        comment_url = reverse(
+            'diaries:comment_create',
+            args=[DiaryDetailViewTest.diary3.slug])
+        self.assertNotContains(
+            response,
+            f'<form method="post" action="{comment_url}">'
+        )
+        self.assertEqual(response.context['comment_form'], None)
+        self.assertContains(response, 'Comments are disabled for this diary.')
