@@ -6,8 +6,17 @@
 	<h2>Search results for :{{ q }}</h2>
 
 	<h3>Users:</h3>
-	{% include 'accounts/snippets/profile_snippet.html' with profiles=profiles %}
+    {% if profiles %}
+	   {% include 'accounts/snippets/profile_snippet.html' with profiles=profiles %}
+    {% else %}
+        <p>We didn't find any user that matches your query</p>
+    {% endif %}
 
 	<h3>Diaries:</h3>
-	{% include 'diaries/snippets/diary_list_snippet.html' with diaries=diaries %}
+    {% if diaries %}
+       {% include 'diaries/snippets/diary_list_snippet.html' with diaries=diaries %}
+    {% else %}
+        <p>We didn't find any diary that matches your query</p>
+    {% endif %}
+	
 {% endblock %}
