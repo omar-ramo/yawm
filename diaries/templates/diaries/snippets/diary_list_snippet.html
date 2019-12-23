@@ -20,7 +20,7 @@
 								</button>
 								<div class="dropdown-menu">
 									<div class="dropdown-header">Share this diary</div>
-									<a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri  }}&title={{ diary.title|iriencode }}" class="dropdown-item" target="_blank" rel="nofollow">facebook</a>
+									<a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri  }}{{ diary.get_absolute_url }}&title={{ diary.title|iriencode }}" class="dropdown-item" target="_blank" rel="nofollow">facebook</a>
 									<a href="#!" class="dropdown-item">twitter</a>
 								</div>
 							</div>
