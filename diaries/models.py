@@ -124,9 +124,8 @@ class Diary(models.Model):
 
     def save(self, *args, **kwargs):
         if(not self.id):
-            new_slug = '{}-{}'.format(
-                slugify(self.title, allow_unicode=True),
-                generate_random_string())
+            new_slug = '{}'.format(
+                slugify(self.title, allow_unicode=True))
 
             while Diary.objects.filter(slug=new_slug).exists():
                 new_slug = '{}-{}'.format(
