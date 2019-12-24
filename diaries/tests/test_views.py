@@ -311,7 +311,7 @@ class DiaryCreateViewTest(TestCase):
 
         cls.profile1 = Profile.objects.get(id=1)
 
-        cls.create_url = reverse('diaries:diary_create')
+        cls.CREATE_URL = reverse('diaries:diary_create')
 
     def test_view_exists_at_desired_location(self):
         self.client.login(username='user1', password='user1pass')
@@ -322,7 +322,7 @@ class DiaryCreateViewTest(TestCase):
 
     def test_view_url_is_accessible_by_name(self):
         self.client.login(username='user1', password='user1pass')
-        response = self.client.get(DiaryCreateViewTest.create_url)
+        response = self.client.get(DiaryCreateViewTest.CREATE_URL)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.resolver_match.func.__name__,
                          DiaryCreateView.as_view().__name__)
@@ -333,32 +333,66 @@ class DiaryCreateViewTest(TestCase):
         self.assertTemplateUsed(response, 'diaries/diary_create.html')
 
     def test_unlogged_in_user_gets_redirected(self):
-        response = self.client.get(DiaryCreateViewTest.create_url)
+        response = self.client.get(DiaryCreateViewTest.CREATE_URL)
         expected_url = ''.join((
             f'{reverse(settings.LOGIN_URL)}',
-            f'?next={DiaryCreateViewTest.create_url}'))
+            f'?next={DiaryCreateViewTest.CREATE_URL}'))
         self.assertRedirects(response, expected_url=expected_url)
 
     def test_response_contains_diary_create_form(self):
         self.client.login(username='user1', password='user1pass')
-        response = self.client.get(DiaryCreateViewTest.create_url)
+        response = self.client.get(DiaryCreateViewTest.CREATE_URL)
         form_tag = '<form method="post" '
-        form_tag += f'action="{DiaryCreateViewTest.create_url}" '
+        form_tag += f'action="{DiaryCreateViewTest.CREATE_URL}" '
         form_tag += 'enctype="multipart/form-data" class="browser-default">'
 
         self.assertIsInstance(response.context['form'], DiaryForm)
         self.assertContains(response, form_tag)
 
-    # def test_profile_is_assigned_to_created_diary(self):
-    #     self.client.login(username='user1', password='user1pass')
-    #     payload = {
-    #         'title': 'Test diary',
-    #         'content': 'Just some content',
-    #     }
-    #     response = self.client.post(
-    #         DiaryCreateViewTest.create_url,
-    #         data=payload)
-    #     self.assertEqual(Diary.objects.count(), 1)
-    #     diary = Diary.objects.first()
-    #     self.assertRedirects(response, diary.get_absolute_url())
-    #     self.assertEqual(diary.author, DiaryCreateViewTest.profile1)
+    def test_diary_is_created_successfly_with_minumum_data(self):
+        self.client.login(username='user1', password='user1pass')
+        payload = {
+            'title': 'Test diary',
+            'content': 'Just some content',
+        }
+        response = self.client.post(
+            DiaryCreateViewTest.CREATE_URL,
+            data=payload)
+        self.assertEqual(Diary.objects.count(), 1)
+
+        diary = Diary.objects.first()
+
+        self.assertRedirects(response, diary.get_absolute_url())
+        self.assertEqual(diary.author, DiaryCreateViewTest.profile1)
+
+    def test_diary_is_created_successfly_with_all_data(self):
+        self.client.login(username='user1', password='user1pass')
+        payload = {
+            'title': 'Test diary',
+            'content': 'Just some content',
+            'is_visible': Diary.NO_ONE_CHOICE,
+            'is_commentable': Diary.ALL_CHOICE,
+            'feeling': Diary.SATISFIED_FEELING,
+        }
+        response = self.client.post(
+            DiaryCreateViewTest.CREATE_URL,
+            data=payload)
+        self.assertEqual(Diary.objects.count(), 1)
+
+        diary = Diary.objects.first()
+
+        self.assertRedirects(response, diary.get_absolute_url())
+        self.assertEqual(diary.author, DiaryCreateViewTest.profile1)
+
+    def test_diary_is_not_created_if_no_data_is_submited(self):
+        self.client.login(username='user1', password='user1pass')
+        payload = {
+            'title': '',
+            'content': '',
+        }
+        response = self.client.post(
+            DiaryCreateViewTest.CREATE_URL,
+            data=payload)
+
+        self.assertEqual(Diary.objects.count(), 0)
+        self.assertTrue(response.context['form'].errors)
