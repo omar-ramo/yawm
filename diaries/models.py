@@ -140,25 +140,24 @@ class Diary(models.Model):
 
         # self.description is supposed to be plain text so that it's displayed
         # in the diary list page
-        start_position = 500
-        end_position = len(self.content)
-        plain_text_description = bleach.clean(
-            self.content[:start_position],
+        start_length = 500
+        total_position = len(self.content)
+        text_description = bleach.clean(
+            self.content[:start_length],
             strip=True,
             tags=[],
             attributes=[]
         ).strip()
-        # If 500 non-clean characters is not enough, add 10 every time
-        while len(plain_text_description) < 245 \
-                & start_position < end_position:
-            plain_text_description += bleach.clean(
-                self.content[start_position:start_position + 10],
+        # If 500 non-clean characters is not enough, add 50 every time
+        while len(text_description) < 245 & start_length < total_position:
+            text_description += bleach.clean(
+                self.content[start_length:start_length + 50],
                 strip=True,
                 tags=[],
                 attributes=[]
             ).strip()
-            start_position += 10
-        self.description = plain_text_description[:255]
+            start_length += 50
+        self.description = text_description[:255]
 
         return super(Diary, self).save(*args, **kwargs)
 
