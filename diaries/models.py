@@ -17,6 +17,10 @@ from .utils import delete_ckeditor_rich_text_images
 class DiaryQuerySet(models.QuerySet):
 
     def active(self, user):
+        """Returns only the diaries that user should be able to see
+           If the user isn't authenticated, he should only see public diaries
+           If he's authencated he can also see his private diaries
+        """
         if not user.is_authenticated:
             qs = self.filter(is_visible=Diary.ALL_CHOICE)
         else:
@@ -29,11 +33,13 @@ class DiaryQuerySet(models.QuerySet):
         return qs
 
     def from_followed_profiles(self, profile):
+        """Returns diaries of followed profiles"""
         followed_profiles = profile.followed_profiles.all()
         qs = self.filter(author__in=followed_profiles)
         return qs
 
     def popular(self):
+        """Order the diaries based on number of comments and likes"""
         qs = self.annotate(
             ranking_factor=F('comments_count') + F('likes_count')
         )
@@ -73,8 +79,6 @@ class Diary(models.Model):
         (AFRAID_FEELING, 'Afraid'),)
 
     title = models.CharField(max_length=255)
-    # Size of slug is bigger than size of title
-    # Because we want to add random string at the end
     slug = models.SlugField(max_length=275, blank=True, allow_unicode=True)
     content = RichTextUploadingField()
     description = models.CharField(max_length=255, null=True, blank=True)
@@ -126,13 +130,11 @@ class Diary(models.Model):
 
     def save(self, *args, **kwargs):
         if(not self.id):
-            new_slug = '{}'.format(
-                slugify(self.title, allow_unicode=True))
+            title_slug = slugify(self.title, allow_unicode=True)
+            new_slug = '{}'.format(title_slug)
 
             while Diary.objects.filter(slug=new_slug).exists():
-                new_slug = '{}-{}'.format(
-                    slugify(self.title, allow_unicode=True),
-                    generate_random_string())
+                new_slug = '{}-{}'.format(title_slug, generate_random_string())
 
             self.slug = new_slug
 
