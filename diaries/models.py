@@ -86,12 +86,14 @@ class Diary(models.Model):
         help_text='Who can see this diary?',
         max_length=7,
         choices=VISIBILITY_CHOICES,
-        default=ALL_CHOICE)
+        default=ALL_CHOICE,
+        blank=True)
     is_commentable = models.CharField(
         help_text='Who can comment on this diary?',
         choices=COMMENTABLE_CHOICES,
         max_length=7,
-        default=ALL_CHOICE)
+        default=ALL_CHOICE,
+        blank=True)
     feeling = models.CharField(
         help_text='How do you feel?',
         max_length=15,
