@@ -8,7 +8,8 @@ from django.urls import reverse
 from accounts.models import Profile
 from ..forms import CommentForm, DiaryForm
 from ..models import Diary
-from ..views import DiaryListView, DiaryDetailView, DiaryCreateView
+from ..views import (DiaryListView, DiaryDetailView, DiaryCreateView,
+                     DiaryUpdateView)
 
 
 class DiaryListViewTest(TestCase):
@@ -396,3 +397,102 @@ class DiaryCreateViewTest(TestCase):
 
         self.assertEqual(Diary.objects.count(), 0)
         self.assertTrue(response.context['form'].errors)
+
+
+class DiaryUpdateViewTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        # Create users
+        get_user_model().objects.create_user(
+            username='user1',
+            email='user1@example.com',
+            password='user1pass'  # -_-
+        )
+
+        cls.profile = Profile.objects.get(id=1)
+
+        cls.diary = Diary.objects.create(
+            title='A test diary',
+            content='test content',
+            is_visible=Diary.ALL_CHOICE,
+            is_commentable=Diary.ALL_CHOICE,
+            feeling=Diary.EXCITED_FEELING,
+            author=DiaryUpdateViewTest.profile
+        )
+
+        cls.UPDATE_URL = reverse('diaries:diary_update', args=['a-test-diary'])
+
+    def test_view_exists_at_desired_location(self):
+        self.client.login(username='user1', password='user1pass')
+        response = self.client.get('/diary/a-test-diary/update')
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.resolver_match.func.__name__,
+                         DiaryUpdateView.as_view().__name__)
+
+    def test_view_url_is_accessible_by_name(self):
+        self.client.login(username='user1', password='user1pass')
+        response = self.client.get(DiaryUpdateViewTest.UPDATE_URL)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.resolver_match.func.__name__,
+                         DiaryUpdateView.as_view().__name__)
+
+    def test_view_uses_correct_template(self):
+        self.client.login(username='user1', password='user1pass')
+        response = self.client.get(DiaryUpdateViewTest.UPDATE_URL)
+        self.assertTemplateUsed(response, 'diaries/diary_update.html')
+
+    def test_response_contains_diary_update_form(self):
+        self.client.login(username='user1', password='user1pass')
+        response = self.client.get(DiaryUpdateViewTest.UPDATE_URL)
+        form_tag = '<form method="post" '
+        form_tag += f'action="{DiaryUpdateViewTest.UPDATE_URL}" '
+        form_tag += 'enctype="multipart/form-data">'
+
+        self.assertIsInstance(response.context['form'], DiaryForm)
+        self.assertIsInstance(response.context['form'].instance, Diary)
+        self.assertContains(response, form_tag)
+
+    def test_unlogged_in_user_gets_redirected(self):
+        response = self.client.get(DiaryUpdateViewTest.UPDATE_URL)
+        expected_url = ''.join((
+            f'{reverse(settings.LOGIN_URL)}',
+            f'?next={DiaryUpdateViewTest.UPDATE_URL}'))
+        self.assertRedirects(response, expected_url=expected_url)
+
+    def test_unlogged_in_user_cant_update_via_post(self):
+        payload = {
+            'title': 'A test diary updated',
+            'content': 'test content updated',
+            'is_visible': Diary.NO_ONE_CHOICE,
+            'is_commentable': Diary.NO_ONE_CHOICE,
+            'feeling': Diary.TIRED_FEELING
+        }
+        response = self.client.post(
+            DiaryUpdateViewTest.UPDATE_URL,
+            data=payload)
+        expected_url = ''.join((
+            f'{reverse(settings.LOGIN_URL)}',
+            f'?next={DiaryUpdateViewTest.UPDATE_URL}'))
+        self.assertRedirects(response, expected_url=expected_url)
+
+    def test_diary_is_updated_successfly(self):
+        self.client.login(username='user1', password='user1pass')
+        payload = {
+            'title': 'A test diary updated',
+            'content': 'test content updated',
+            'is_visible': Diary.NO_ONE_CHOICE,
+            'is_commentable': Diary.NO_ONE_CHOICE,
+            'feeling': Diary.TIRED_FEELING
+        }
+        response = self.client.post(
+            DiaryUpdateViewTest.UPDATE_URL,
+            data=payload)
+        self.assertEqual(Diary.objects.count(), 1)
+
+        diary = Diary.objects.first()
+
+        self.assertRedirects(response, diary.get_absolute_url())
+        self.assertEqual(diary.author, DiaryUpdateViewTest.profile)
+
+        for key, value in payload.items():
+            self.assertEqual(getattr(diary, key), value)
