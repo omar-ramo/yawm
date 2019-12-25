@@ -33,6 +33,7 @@ class ProfileListView(LoginRequiredMixin, ListView):
     template_name = 'accounts/profile_list.html'
     model = Profile
     paginate_by = 12
+    context_object_name = 'profiles'
 
     def get_context_data(self, *args, **kwargs):
         cx = super().get_context_data(*args, **kwargs)
@@ -49,15 +50,10 @@ class ProfileListView(LoginRequiredMixin, ListView):
             target_profile = self.request.user.profile
 
         if criteria == 'following':
-            profiles = target_profile.followed_profiles.all()\
-                .with_diaries_followers_count()
             title = 'People {} follow(s)'
         elif criteria == 'followers':
-            profiles = target_profile.followers.all()\
-                .with_diaries_followers_count()
             title = 'People that follow {}'
         else:
-            profiles = Profile.objects.top()
             title = 'People worth following'
 
         if username:
@@ -65,9 +61,32 @@ class ProfileListView(LoginRequiredMixin, ListView):
         else:
             title = title.format('you')
 
-        cx['profiles'] = profiles
         cx['title'] = title
         return cx
+
+    def get_queryset(self):
+
+        criteria = self.request.GET.get('type', '')
+        username = self.request.GET.get('username', '')
+
+        if username:
+            target_profile = get_object_or_404(
+                self.model,
+                user__username=username
+            )
+        else:
+            target_profile = self.request.user.profile
+
+        if criteria == 'following':
+            profiles = target_profile.followed_profiles.all()\
+                .with_diaries_followers_count()
+        elif criteria == 'followers':
+            profiles = target_profile.followers.all()\
+                .with_diaries_followers_count()
+        else:
+            profiles = self.model.objects.top()
+
+        return profiles
 
 
 class ProfileDetailView(DetailView):
