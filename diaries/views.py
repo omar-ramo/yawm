@@ -1,5 +1,6 @@
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator
 from django.db.models import Q, F
 from django.http import Http404
 from django.shortcuts import render, get_object_or_404, redirect
@@ -226,18 +227,39 @@ class CommentDeleteView(LoginRequiredMixin, DeleteView):
 class SearchView(View):
     def get(self, request):
         q = request.GET.get('q', '')
+        page = request.GET.get('page', '')
 
         diaries = Diary.objects.active(self.request.user)
-        diaries = diaries.filter(title__contains=q).distinct()[:9]
+        diaries = diaries.filter(title__contains=q).distinct()
+
+        diaries_paginator = Paginator(diaries, 9)
+        diaries_page_object = diaries_paginator.get_page(page)
 
         profiles = Profile.objects.filter(
             Q(name__contains=q) |
             Q(user__username__contains=q) |
-            Q(description__contains=q)).distinct()[:12]
+            Q(description__contains=q)).distinct()
+
+        profiles_paginator = Paginator(profiles, 12)
+        profiles_page_object = profiles_paginator.get_page(page)
+
+        # Since diaries and profiles results will be on the same page
+        # I will create pages links for from the one with more pages. 
+        if diaries_paginator.num_pages >= profiles_paginator.num_pages:
+            page_obj = diaries_page_object
+        else:
+            page_obj = profiles_page_object
+
+        # If only one of them is paginated, show page links
+        is_paginated = False
+        if diaries_paginator.num_pages > 1 or profiles_paginator.num_pages > 1:
+            is_paginated = True
 
         context = {
-            'diaries': diaries,
-            'profiles': profiles,
+            'is_paginated': is_paginated,
+            'page_obj': page_obj,
+            'diaries': diaries_page_object,
+            'profiles': profiles_page_object,
             'q': q
         }
         return render(request, 'diaries/search.html', context)
