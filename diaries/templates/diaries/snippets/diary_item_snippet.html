@@ -1,0 +1,76 @@
+{% load static %}
+{% load thumbnail %}
+<div class="col-md-4 diary-item mt-4">
+	<div class="card-panel">
+		<!-- Diary Metadat Start -->
+		<div class="media">
+			<a href="{{ diary.author.get_absolute_url }}">
+
+				<img src="{% if diary.author.image %}{% thumbnail diary.author.image '50x50' crop='center' as img %}{{ img.url }}{% endthumbnail %}{% else %}{% static 'img/default_person_image.png' %}{% endif%}" class="img-fluid rounded-circle mr-2">
+			</a>
+			<div class="media-body ml-2">
+					<a href="{{ diary.author.get_absolute_url }}">
+						<h5 class="d-inline-block">{{ diary.author }}</h5>
+					</a>
+					<div class="dropdown d-inline-block float-right">
+						<button class="btn dropdown-toggle float-left" data-toggle="dropdown">
+							<span class="oi" data-glyph="fork" title="fork" aria-hidden="true"></span>
+						</button>
+						<div class="dropdown-menu">
+							<div class="dropdown-header">Share this diary</div>
+							<a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri  }}{{ diary.get_absolute_url }}&title={{ diary.title|iriencode }}" class="dropdown-item" target="_blank" rel="nofollow">facebook</a>
+							<a href="#!" class="dropdown-item">twitter</a>
+						</div>
+					</div>
+					<p><span class="oi" data-glyph="pencil" title="pencil" aria-hidden="true"></span> <b>{{ diary.created_on|timesince }}</b> ago</p>
+			</div>
+		</div>
+		<!-- Diary Metadat End -->
+
+		<!-- Diary Start -->
+		<div class="card">
+			{% if diary.image %}
+			<div class="card-image">
+				<a href="{{ diary.get_absolute_url }}">
+					{% thumbnail diary.image '350x180' crop='center' as img %}
+					<img src="{{ img.url }}" class="img-fluid">
+					{% endthumbnail %}
+				</a>
+			</div>
+			{% endif %}
+			<div class="card-body">
+				<a href="{{ diary.get_absolute_url }}">
+					<h4 class="card-title">
+						{{ diary.title|truncatechars:'120' }}
+						{% if diary.is_visible == 'no_one' %}
+							<small>
+								<span class="badge badge-secondary">Draft</span>
+							</small>
+						{% endif %}
+					</h4>
+				</a>
+				<p class="card-text">{{ diary.description }}</p>
+			</div>
+			<div class="card-footer">
+				<span class="mr-5">
+					<form action="{% url 'diaries:diary_like' diary.slug %}" method="post" id="like-form" style="display: inline-block;" >
+						{% csrf_token %}
+						<button type="submit" class="btn btn-body">
+						{% if request.user.profile in diary.likes.all %}
+							<span class="oi text-danger" data-glyph="heart" title="heart" aria-hidden="true"></span>
+						{% else %}
+							<span class="oi" data-glyph="heart" title="heart" aria-hidden="true"></span>
+						{% endif %}
+							 ({{ diary.likes_count }})
+						</button>
+					</form>
+				</span>
+				<span class="ml-5">
+					<span class="oi" data-glyph="comment-square" title="comment square" aria-hidden="true"></span>
+					({{ diary.comments_count }})
+				</span>
+			</div>
+		</div>
+		<!-- Diary End -->
+	</div>
+</div>

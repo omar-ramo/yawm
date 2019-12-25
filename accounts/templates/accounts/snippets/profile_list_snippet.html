@@ -1,17 +1,14 @@
-{% load static %}
-{% load thumbnail %}
 <div class="row">
-	{% for diary in diaries %}
-		
-		{% include 'diaries/snippets/diary_item_snippet.html' with diary=diary %}
-		
-		{% if forloop.counter|divisibleby:'3' %}
-		</div><div class="row">
+	{% for profile in profiles %}
+		{% include 'accounts/snippets/profile_item_snippet.html' with profile=profile %}
+		{% if forloop.counter|divisibleby:'4' %}
+		</div><div class="row mt-4">
 		{% endif %}
 	{% empty %}
-		<p>There is no diaries.</p>
+		<p>There is no profiles.</p>
 	{% endfor %}
 </div>
+
 <div class="row">
 	<!-- Pagination Start -->
 	<div class="col-md-12">

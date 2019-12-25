@@ -1,0 +1,25 @@
+{% load static %}
+{% load thumbnail %}
+
+<div class="col-md-3 text-center">
+	<a href="{{ profile.get_absolute_url }}">
+		<img src="{% if profile.image %}{% thumbnail profile.image '50x50' crop='center' as img %}{{ img.url }}{% endthumbnail %}{% else %}{% static 'img/default_person_image.png' %}{% endif%}" class="img-fluid rounded-circle author-metadata-image">
+		<h5>{{ profile.name }}</h5>
+	</a>
+	{% if request.user.profile == profile %}
+		<p>Diaries: {{ profile.written_diaries_count }}</p>
+	{% else %}
+		<p>Diaries: {{ profile.visible_written_diaries_count }}</p>
+	{% endif %}		
+	<p>Followers: {{ profile.followers_count }}</p>
+	<form method="post" action="{% url 'accounts:profile_follow' profile.user.username %}">
+		{% csrf_token %}
+			{% if request.user.profile != profile %}
+				{% if request.user.profile in profile.followers.all %}
+					<button class="btn btn-dark">Unfollow</button>
+				{% else %}
+					<button class="btn btn-success">Follow</button>
+				{% endif %}
+			{% endif %}
+	</form>
+</div>
