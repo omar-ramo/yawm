@@ -31,8 +31,8 @@
 		</form>
 	</div>
 	<div class="col-md-12 text-center my-3">
-		<a href="{% url 'accounts:profile_list' %}?type=following&username={{ profile.user.username }}" class="btn btn-info">Following</a>
-		<a href="{% url 'accounts:profile_list' %}?type=followers&username={{ profile.user.username }}" class="btn btn-info">Followers</a>
+		<a href="{% url 'accounts:profile_following_list' profile.user.username %}" class="btn btn-info">Following</a>
+		<a href="{% url 'accounts:profile_followers_list' profile.user.username %}" class="btn btn-info">Followers</a>
 	</div>
 	{% endif %}
 </div>

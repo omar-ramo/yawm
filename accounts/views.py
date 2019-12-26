@@ -13,6 +13,55 @@ from .forms import ProfileForm
 from .models import Profile
 
 
+class ProfileListBaseView(LoginRequiredMixin, ListView):
+    template_name = 'accounts/profile_list.html'
+    model = Profile
+    paginate_by = 12
+    context_object_name = 'profiles'
+
+
+class ProfileTopListView(ProfileListBaseView):
+
+    extra_context = {'title': 'People worth following'}
+
+    def get_queryset(self):
+        return self.model.objects.top()
+
+
+class ProfileFollowersListView(ProfileListBaseView):
+
+    def get_context_data(self, *args, **kwargs):
+        cx = super().get_context_data(*args, **kwargs)
+        username = self.kwargs.get('username')
+        cx['title'] = 'People that follow {}'.format(username)
+        return cx
+
+    def get_queryset(self):
+        username = self.kwargs.get('username')
+        profile = get_object_or_404(self.model, user__username=username)
+
+        followers = profile.followers.all().with_diaries_followers_count()
+        return followers
+
+
+class ProfileFollowingListView(ProfileListBaseView):
+
+    def get_context_data(self, *args, **kwargs):
+        cx = super().get_context_data(*args, **kwargs)
+        username = self.kwargs.get('username')
+        cx['title'] = 'People {} follows'.format(username)
+        return cx
+
+    def get_queryset(self):
+        username = self.kwargs.get('username')
+        profile = get_object_or_404(self.model, user__username=username)
+
+        followed_profiles = profile.followed_profiles.all()\
+            .with_diaries_followers_count()
+
+        return followed_profiles
+
+
 class ProfileUpdateView(LoginRequiredMixin, UpdateView):
     model = Profile
     form_class = ProfileForm
@@ -27,66 +76,6 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
         if not obj == self.request.user.profile:
             raise Http404
         return obj
-
-
-class ProfileListView(LoginRequiredMixin, ListView):
-    template_name = 'accounts/profile_list.html'
-    model = Profile
-    paginate_by = 12
-    context_object_name = 'profiles'
-
-    def get_context_data(self, *args, **kwargs):
-        cx = super().get_context_data(*args, **kwargs)
-
-        criteria = self.request.GET.get('type', '')
-        username = self.request.GET.get('username', '')
-
-        if username:
-            target_profile = get_object_or_404(
-                Profile,
-                user__username=username
-            )
-        else:
-            target_profile = self.request.user.profile
-
-        if criteria == 'following':
-            title = 'People {} follow(s)'
-        elif criteria == 'followers':
-            title = 'People that follow {}'
-        else:
-            title = 'People worth following'
-
-        if username:
-            title = title.format(target_profile.name)
-        else:
-            title = title.format('you')
-
-        cx['title'] = title
-        return cx
-
-    def get_queryset(self):
-
-        criteria = self.request.GET.get('type', '')
-        username = self.request.GET.get('username', '')
-
-        if username:
-            target_profile = get_object_or_404(
-                self.model,
-                user__username=username
-            )
-        else:
-            target_profile = self.request.user.profile
-
-        if criteria == 'following':
-            profiles = target_profile.followed_profiles.all()\
-                .with_diaries_followers_count()
-        elif criteria == 'followers':
-            profiles = target_profile.followers.all()\
-                .with_diaries_followers_count()
-        else:
-            profiles = self.model.objects.top()
-
-        return profiles
 
 
 class ProfileDetailView(DetailView):
