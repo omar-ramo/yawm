@@ -21,21 +21,23 @@ class DiaryQuerySet(models.QuerySet):
            If the user isn't authenticated, he should only see public diaries
            If he's authencated he can also see his private diaries
         """
-        if not user.is_authenticated:
-            qs = self.filter(is_visible=Diary.ALL_CHOICE)
-        else:
+        if user.is_authenticated:
             # User can see his non-visible diaries.
             qs = self.filter(
                 Q(author=user.profile) |
                 Q(is_visible=Diary.ALL_CHOICE))
             qs = qs.distinct()
+        else:
+            qs = self.filter(is_visible=Diary.ALL_CHOICE)
         qs = qs.select_related('author')
         return qs
 
-    def from_followed_profiles(self, profile):
+    def by_followed_profiles(self, profile):
         """Returns diaries of followed profiles"""
         followed_profiles = profile.followed_profiles.all()
-        qs = self.filter(author__in=followed_profiles)
+        qs = self.filter(
+            author__in=followed_profiles,
+            is_visible=Diary.ALL_CHOICE)
         return qs
 
     def popular(self):

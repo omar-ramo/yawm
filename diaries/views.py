@@ -38,19 +38,12 @@ class DiaryListView(ListView):
             qs = self.model.objects.all()
         else:
             if self.request.user.is_authenticated:
-                # User will only see the diaries of people he follows + his own
-                # I will use .active(self.request.user) here because the
-                # Resulting qs of .union() doesn't allow oher operations
-                # other than: count, order_by, values,values_list
                 followed_profiles_diaries = Diary.objects\
-                    .from_followed_profiles(self.request.user.profile)\
-                    .order_by().active(self.request.user)
+                    .by_followed_profiles(self.request.user.profile).order_by()
 
                 current_profile_diaries = Diary.objects.filter(
                     author=self.request.user.profile
-                ).order_by().active(
-                    self.request.user
-                )
+                ).order_by()
 
                 qs = followed_profiles_diaries.union(current_profile_diaries)
                 qs = qs.order_by('-created_on')
