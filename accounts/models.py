@@ -1,9 +1,10 @@
-from django.conf import settings
 from django.db import models
 from django.db.models import Count, F
 from django.db.models.signals import post_save
+from django.conf import settings
 from django.urls import reverse
 
+from .utils import assign_default_image_to_profile
 from core.utils import get_image_upload_path
 
 
@@ -86,7 +87,9 @@ class Profile(models.Model):
 
 def create_profile(sender, instance, created, **kwargs):
     if created:
-        Profile.objects.create(user=instance)
+        new_profile = Profile(user=instance)
+        new_profile = assign_default_image_to_profile(new_profile)
+        new_profile.save()
 
 
 post_save.connect(create_profile, sender=settings.AUTH_USER_MODEL)

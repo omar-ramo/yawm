@@ -11,6 +11,7 @@ from notifications.signals import notify
 
 from .forms import ProfileForm
 from .models import Profile
+from .utils import assign_default_image_to_profile
 
 
 class ProfileListBaseView(LoginRequiredMixin, ListView):
@@ -76,6 +77,11 @@ class ProfileUpdateView(LoginRequiredMixin, UpdateView):
         if not obj == self.request.user.profile:
             raise Http404
         return obj
+
+    def form_valid(self, form):
+        if not form['image'].data and not form.instance.image:
+            form.instance = assign_default_image_to_profile(form.instance)
+        return super().form_valid(form)
 
 
 class ProfileDetailView(DetailView):
