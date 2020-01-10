@@ -4,7 +4,7 @@ from ..models import Diary, Comment
 
 
 class CommentSerializer(serializers.ModelSerializer):
-    author = serializers.ReadOnlyField(source='author.name')
+    author_name = serializers.ReadOnlyField(source='author.name')
     author_image = serializers.ReadOnlyField(source='author.image.url')
 
     class Meta:
@@ -14,27 +14,28 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class DiaryListSerializer(serializers.ModelSerializer):
-    author = serializers.ReadOnlyField(source='author.name')
+    author_name = serializers.ReadOnlyField(source='author.name')
     author_image = serializers.ReadOnlyField(source='author.image.url')
 
     class Meta:
         model = Diary
-        fields = ['title', 'slug', 'image', 'description',
-                  'created_on', 'likes_count', 'comments_count',
-                  'author_name', 'author_image']
+        fields = ['title', 'slug', 'image', 'description', 'created_on',
+                  'likes_count', 'comments_count', 'author_name',
+                  'author_image']
         read_only_fields = ['slug', 'description',
                             'created_on', 'likes_count', 'comments_count']
 
 
 class DiaryDetailSerializer(serializers.ModelSerializer):
-    author = serializers.ReadOnlyField(source='author.name')
+    author_name = serializers.ReadOnlyField(source='author.name')
     author_image = serializers.ReadOnlyField(source='author.image.url')
-    comments = CommentSerializer(many=True)
+    comments = CommentSerializer(many=True, read_only=True)
 
     class Meta:
         model = Diary
-        fields = ['title', 'slug', 'image', 'content',
-                  'created_on', 'likes_count', 'comments_count',
-                  'author_name', 'author_image', 'feeling', 'is_commentale']
-        read_only_fields = ['slug', 'created_on',
-                            'likes_count', 'comments_count']
+        fields = ['title', 'slug', 'image', 'content', 'created_on',
+                  'likes_count', 'comments_count', 'author_name',
+                  'author_image', 'feeling', 'is_visible', 'is_commentable',
+                  'comments']
+        read_only_fields = ['slug', 'created_on', 'likes_count',
+                            'comments_count']
