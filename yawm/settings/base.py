@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
+    'rest_framework',
 ]
 
 MIDDLEWARE = [
@@ -159,10 +160,11 @@ CKEDITOR_ALLOW_NONIMAGE_FILES = False
 CKEDITOR_CONFIGS = {
     'default': {
         'toolbar': [
-            ["Format", "Bold", "Italic", "Underline", "Strike",
-             'NumberedList', 'BulletedList'], ['JustifyLeft', 'JustifyCenter',
-             'JustifyRight', 'JustifyBlock', "Image", "Link", "Unlink", "Subscript", "Superscript"],
-             ['Undo', 'Redo', "Maximize"],
+            ['Format', 'Bold', 'Italic', 'Underline', 'Strike',
+             'NumberedList', 'BulletedList'],
+            ['JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock',
+             'Image', 'Link', 'Unlink', 'Subscript', 'Superscript'],
+            ['Undo', 'Redo', 'Maximize'],
             []
         ],
         'width': 'auto',
