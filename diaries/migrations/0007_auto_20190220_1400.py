@@ -11,7 +11,6 @@ def set_likes_and_comments_count(apps, schema_editor):
         d.likes_count = likes_count
         d.comments_count = d.comments.count()
         d.save()
-        print(d)
 
 
 def reset_likes_and_comments_count(apps, schema_editor):
@@ -20,7 +19,6 @@ def reset_likes_and_comments_count(apps, schema_editor):
         d.likes_count = 0
         d.comments_count = 0
         d.save()
-        print(d)
 
 
 class Migration(migrations.Migration):
