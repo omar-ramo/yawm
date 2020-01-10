@@ -73,7 +73,7 @@
 												<div class="dropdown-item mt-1">
 												{% endif %}
 													<p style="font-size: 12px;">
-														<img src="{% if n.actor.image %}{% thumbnail n.actor.image '50x50' crop='center' as img %}{{ img.url }}{% endthumbnail %}{% else %}{% static 'img/default_person_image.png' %}{% endif%}" class="img-fluid rounded-circle" style="height: 30px; width: 30px;">
+														<img src="{% thumbnail n.actor.image '50x50' crop='center' as img %}{{ img.url }}{% endthumbnail %}" class="img-fluid rounded-circle" style="height: 30px; width: 30px;">
 														<a href="{{ n.actor.get_absolute_url }}">{{ n.actor }}</a> <b>{{ n.verb }}</b>
 														{% if n.target %}
 														<a href="{{ n.target.get_absolute_url }}">{{ n.target }}</a>
@@ -105,7 +105,7 @@
 								<li class="nav-item">
 									<div class="dropdown">
 										{% with profile=request.user.profile %}
-										<img src="{% if profile.image %}{% thumbnail profile.image '50x50' crop='center' as img %}{{ img.url }}{% endthumbnail %}{% else %}{% static 'img/default_person_image.png' %}{% endif%}" class="img-fluid dropdown-toggle rounded-circle" data-toggle="dropdown">
+										<img src="{% thumbnail profile.image '50x50' crop='center' as img %}{{ img.url }}{% endthumbnail %}" class="img-fluid dropdown-toggle rounded-circle" data-toggle="dropdown">
 										<div class="dropdown-menu">
 											<a href="{{ profile.get_absolute_url }}" class="dropdown-item">
 												My Profile ({{ request.user.username }}) 

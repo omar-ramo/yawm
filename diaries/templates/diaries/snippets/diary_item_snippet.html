@@ -6,7 +6,7 @@
 		<div class="media">
 			<a href="{{ diary.author.get_absolute_url }}">
 
-				<img src="{% if diary.author.image %}{% thumbnail diary.author.image '50x50' crop='center' as img %}{{ img.url }}{% endthumbnail %}{% else %}{% static 'img/default_person_image.png' %}{% endif%}" class="img-fluid rounded-circle mr-2">
+				<img src="{% thumbnail diary.author.image '50x50' crop='center' as img %}{{ img.url }}{% endthumbnail %}" class="img-fluid rounded-circle mr-2">
 			</a>
 			<div class="media-body ml-2">
 					<a href="{{ diary.author.get_absolute_url }}">

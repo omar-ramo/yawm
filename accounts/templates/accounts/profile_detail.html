@@ -1,12 +1,12 @@
 {% extends 'accounts/base_accounts.html' %}
-{% load static %}
+{% load thumbnail %}
 
 {% block title %}{{ profile.name }} - {{block.super}}{% endblock %}
 
 {% block content %}
 <div class="row">
 	<div class="col-md-12 text-center">
-		<img src="{% if profile.image %}{{ profile.image.url }}{% else %}{% static 'img/default_person_image.png' %}{% endif%}" class="img-fluid rounded-circle" style="height: 120px !important; width: 120px !important;">
+		<img src="{% thumbnail profile.image '50x50' crop='90px' as img %}{{ img.url }}{% endthumbnail %}" class="img-fluid rounded-circle" style="height: 120px !important; width: 120px !important;">
 		<h3>{{ profile.name }}</h3>
 		{% if request.user.profile == profile %}
 		<p>Diaries: {{ profile.written_diaries_count }}</p>

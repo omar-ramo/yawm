@@ -33,7 +33,7 @@
 				<div class="col-sm-10">
 					<div class="media">
 						<a href="{{ diary.author.get_absolute_url }}">
-							<img src="{% if diary.author.image %} {{ diary.author.image.url }} {% else %}{% static 'img/default_person_image.png' %}{% endif %}" class="img-fluid rounded-circle author-metadata-image d-block mt-2">
+							<img src="{% thumbnail diary.author.image '50x50' crop='center' as img %}{{ img.url }}{% endthumbnail %}" class="img-fluid rounded-circle author-metadata-image d-block mt-2">
 						</a>
 							<div class="media-body ml-2">
 								<h3>
@@ -106,7 +106,7 @@
 		<div>
 			{% for comment in diary.comments.all %}
 			<div class="media mt-3 jumbotron p-1 mt-1">
-				<img src="{% if comment.author.image %}{{ comment.author.image.url }}{% else %}{% static 'img/default_person_image.png' %}{% endif%}" class="img-fluid rounded-circle author-metadata-image mt-2">
+				<img src="{% thumbnail comment.author.image '50x50' crop='center' as img %}{{ img.url }}{% endthumbnail %}" class="img-fluid rounded-circle author-metadata-image mt-2">
 				<div class="media-body ml-2">
 					<h4 class="d-inline-block mr-3"><a href="{{ comment.author.get_absolute_url }}">{{ comment.author }}</a></h4>
 					<small class="d-inline-block mr-3">{{ comment.created_on|timesince }} ago</small>
