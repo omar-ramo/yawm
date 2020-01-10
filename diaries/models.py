@@ -45,7 +45,7 @@ class DiaryQuerySet(models.QuerySet):
         qs = self.annotate(
             ranking_factor=F('comments_count') + F('likes_count')
         )
-        qs = qs.order_by('-ranking_factor')
+        qs = qs.filter(is_visible=Diary.ALL_CHOICE).order_by('-ranking_factor')
         return qs
 
 

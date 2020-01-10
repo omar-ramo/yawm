@@ -36,6 +36,7 @@ class DiaryListView(ListView):
             qs = self.model.objects.popular()
         elif order_by == 'discover':
             qs = self.model.objects.all()
+            qs = qs.active(self.request.user)
         else:
             if self.request.user.is_authenticated:
                 followed_profiles_diaries = Diary.objects\
@@ -49,7 +50,6 @@ class DiaryListView(ListView):
                 qs = qs.order_by('-created_on')
             else:
                 qs = self.model.objects.all()
-        qs = qs.active(self.request.user)
         return qs
 
 
@@ -237,7 +237,7 @@ class SearchView(View):
         profiles_page_object = profiles_paginator.get_page(page)
 
         # Since diaries and profiles results will be on the same page
-        # I will create pages links for from the one with more pages. 
+        # I will create pages links for from the one with more pages.
         if diaries_paginator.num_pages >= profiles_paginator.num_pages:
             page_obj = diaries_page_object
         else:
