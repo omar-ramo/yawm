@@ -23,7 +23,7 @@ class DiaryListCreateAPIView(generics.ListCreateAPIView):
         return DiaryListSerializer
 
     def get_queryset(self):
-        order_by = self.request.GET.get('order_by', None)
+        order_by = self.request.query_params.get('order_by', None)
         if order_by == 'popularity':
             qs = self.model.objects.popular()
         elif order_by == 'discover':
