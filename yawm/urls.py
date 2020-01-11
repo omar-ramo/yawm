@@ -46,7 +46,7 @@ urlpatterns = [
     ])),
     path('', include('diaries.urls', namespace='diaries')),
     path('api/v1/', include([
-        path('diaries', include('diaries.api.urls', namespace='diaries_api'))
+        path('diaries/', include('diaries.api.urls', namespace='diaries_api'))
     ])),
 
 ]

@@ -1,5 +1,6 @@
 from rest_framework import generics
 from rest_framework.pagination import PageNumberPagination
+from rest_framework import permissions
 
 from .serializers import DiaryListSerializer, DiaryDetailSerializer
 from ..models import Diary
@@ -7,6 +8,16 @@ from ..models import Diary
 
 class StandardPagination(PageNumberPagination):
     page_size = 9
+
+
+class IsOwnerOrReadOnly(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if request.method in permissions.SAFE_METHODS:
+            return True
+        if request.user.is_authenticated:
+            if obj.author == request.user.profile:
+                return True
+        return False
 
 
 class DiaryListCreateAPIView(generics.ListCreateAPIView):
@@ -42,4 +53,15 @@ class DiaryListCreateAPIView(generics.ListCreateAPIView):
                 qs = qs.order_by('-created_on')
             else:
                 qs = self.model.objects.all()
+        return qs
+
+
+class DiaryRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+    lookup_field = 'slug'
+    lookup_url_kwarg = 'diary_slug'
+    permission_classes = [IsOwnerOrReadOnly]
+    serializer_class = DiaryDetailSerializer
+
+    def get_queryset(self):
+        qs = Diary.objects.active(self.request.user)
         return qs

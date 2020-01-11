@@ -10,7 +10,7 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ['content', 'created_on', 'author_name', 'author_image']
-        readonly_fields = ['created_on']
+        read_only_fields = ['created_on']
 
 
 class DiaryListSerializer(serializers.ModelSerializer):
@@ -30,6 +30,7 @@ class DiaryDetailSerializer(serializers.ModelSerializer):
     author_name = serializers.ReadOnlyField(source='author.name')
     author_image = serializers.ReadOnlyField(source='author.image.url')
     comments = CommentSerializer(many=True, read_only=True)
+    # lookup_field = 'slug'
 
     class Meta:
         model = Diary
