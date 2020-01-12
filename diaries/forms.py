@@ -39,3 +39,13 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ['content']
+
+
+class SearchForm(forms.Form):
+    q = forms.CharField(
+        label='',
+        widget=forms.TextInput(attrs={'placeholder': 'Search query'}))
+    model = forms.ChoiceField(
+        label='',
+        choices=(('diary', 'diaries'), ('profile', 'Profiles')),
+        widget=forms.RadioSelect)

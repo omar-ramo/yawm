@@ -15,7 +15,7 @@ from django.urls import reverse
 from notifications.views import NotificationViewList
 from notifications.models import Notification
 
-from .forms import DiaryForm, CommentForm
+from .forms import DiaryForm, CommentForm, SearchForm
 from .models import Diary, DiaryLike, Comment
 from accounts.models import Profile
 
@@ -29,6 +29,8 @@ class DiaryListView(ListView):
     template_name = 'diaries/diary_list.html'
     context_object_name = 'diaries'
     order_by = None
+
+    extra_context = {'search_form': SearchForm(initial={'model': 'diary'})}
 
     def get_queryset(self):
         order_by = self.order_by
@@ -217,45 +219,43 @@ class CommentDeleteView(LoginRequiredMixin, DeleteView):
         return diary.get_absolute_url()
 
 
-class SearchView(View):
-    def get(self, request):
-        q = request.GET.get('q', '')
-        page = request.GET.get('page', '')
+class SearchView(ListView):
+    template_name = 'diaries/search.html'
+    context_object_name = 'results'
 
-        diaries = Diary.objects.active(self.request.user)
-        diaries = diaries.filter(title__contains=q).distinct()
+    def get_paginate_by(self, queryset):
+        search_form = SearchForm(self.request.GET)
+        if search_form.is_valid():
+            if search_form.cleaned_data['model'] == 'diary':
+                return 9
+            elif search_form.cleaned_data['model'] == 'profile':
+                return 12
 
-        diaries_paginator = Paginator(diaries, 9)
-        diaries_page_object = diaries_paginator.get_page(page)
+    def get_context_data(self):
+        cx = super().get_context_data()
+        search_form = SearchForm(self.request.GET)
+        if search_form.is_valid():
+            cx['q'] = search_form.cleaned_data['q']
+            if search_form.cleaned_data['model'] == 'diary':
+                cx['model'] = 'diary'
+            elif search_form.cleaned_data['model'] == 'profile':
+                cx['model'] = 'profile'
+            return cx
 
-        profiles = Profile.objects.filter(
-            Q(name__contains=q) |
-            Q(user__username__contains=q) |
-            Q(description__contains=q)).distinct()
-
-        profiles_paginator = Paginator(profiles, 12)
-        profiles_page_object = profiles_paginator.get_page(page)
-
-        # Since diaries and profiles results will be on the same page
-        # I will create pages links for from the one with more pages.
-        if diaries_paginator.num_pages >= profiles_paginator.num_pages:
-            page_obj = diaries_page_object
-        else:
-            page_obj = profiles_page_object
-
-        # If only one of them is paginated, show page links
-        is_paginated = False
-        if diaries_paginator.num_pages > 1 or profiles_paginator.num_pages > 1:
-            is_paginated = True
-
-        context = {
-            'is_paginated': is_paginated,
-            'page_obj': page_obj,
-            'diaries': diaries_page_object,
-            'profiles': profiles_page_object,
-            'q': q
-        }
-        return render(request, 'diaries/search.html', context)
+    def get_queryset(self):
+        search_form = SearchForm(self.request.GET)
+        if search_form.is_valid():
+            q = search_form.cleaned_data['q']
+            if search_form.cleaned_data['model'] == 'diary':
+                diaries = Diary.objects.active(self.request.user)
+                diaries = diaries.filter(title__contains=q).distinct()
+                return diaries
+            elif search_form.cleaned_data['model'] == 'profile':
+                profiles = Profile.objects.filter(
+                    Q(name__contains=q) |
+                    Q(user__username__contains=q) |
+                    Q(description__contains=q)).distinct()
+                return profiles
 
 
 class NotificationListView(LoginRequiredMixin, NotificationViewList):

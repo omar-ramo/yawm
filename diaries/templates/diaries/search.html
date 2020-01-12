@@ -5,9 +5,10 @@
 {% block content %}
 	<h2>Search results for :{{ q }} (Page {{page_obj.number}})</h2>
 
+{% if model == 'profile' %}
 	<h3>Users:</h3>
     <div class="row">
-        {% for profile in profiles %}
+        {% for profile in results %}
             {% include 'accounts/snippets/profile_item_snippet.html' with profile=profile %}
             {% if forloop.counter|divisibleby:'4' %}
                 </div><div class="row mt-4">
@@ -16,10 +17,10 @@
             <p>We didn't find any user that matches your query</p>
         {% endfor %}
     </div>
-
+{% elif model == 'diary' %}
 	<h3>Diaries:</h3>
     <div class="row">
-    {% for diary in diaries %}
+    {% for diary in results %}
         {% include 'diaries/snippets/diary_item_snippet.html' with diary=diary %}
         {% if forloop.counter|divisibleby:'3' %}
             </div><div class="row">
@@ -28,22 +29,22 @@
         <p>We didn't find any diary that matches your query</p>
     {% endfor %}
     </div>
-
+{% endif %}
     <div class="row">
         <!-- Pagination Start -->
         <div class="col-md-12">
             {% if is_paginated %}
                 <ul class="pagination justify-content-center">
                     <li class=" page-item {% if not page_obj.has_previous %}disabled{% endif %}">
-                        <a {% if page_obj.has_previous %}href="?q={{q}}&page={{ page_obj.previous_page_number }}"{% endif %} class="page-link">&lt;</a>
+                        <a {% if page_obj.has_previous %}href="?q={{q}}&model={{model}}&page={{ page_obj.previous_page_number }}"{% endif %} class="page-link">&lt;</a>
                     </li>
                     {% for page in page_obj.paginator.page_range %}
                         <li  class="page-item {% if page == page_obj.number %}active{% endif %}">
-                            <a href="?q={{q}}&page={{ page }}" class="page-link">{{ page }}</a>
+                            <a href="?q={{q}}&model={{model}}&page={{ page }}" class="page-link">{{ page }}</a>
                         </li>
                     {% endfor %}
                     <li class="page-item {% if not page_obj.has_next %}disabled{% endif %}">
-                        <a {% if page_obj.has_next %}href="?q={{q}}&page={{ page_obj.next_page_number }}"{% endif %} class="page-link">&gt;</a>
+                        <a {% if page_obj.has_next %}href="?q={{q}}&model={{model}}&page={{ page_obj.next_page_number }}"{% endif %} class="page-link">&gt;</a>
                     </li>
                 </ul>
             {% endif %}

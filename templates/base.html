@@ -34,14 +34,34 @@
 						<span class="navbar-toggler-icon oi" data-glyph="menu" title="menu" aria-hidden="true"></span>
 					</button>
 					<form class="form form-inline ml-2 mt-2" action="{% url 'diaries:search' %}">
-						<div class="input-group">
-							<div class="input-group-append">
-								<input class="form-control" name="q" max-length="50" value="{{ q }}"></input>
-								<button class="btn btn-body">
-									<span class="oi" data-glyph="magnifying-glass" title="magnifying-glass" aria-hidden="true"></span>
-								</button>
-							</div>
-						</div>
+					    <div class="input-group">
+					        <div class="input-group-append">
+					        <div id="div_id_q" class="form-group">
+					            <div class="">
+					                <input type="text" name="q" placeholder="Search query" class="textinput textInput form-control" required id="id_q">
+					            </div>
+					        </div>
+					        <div id="div_id_model" class="form-group">
+					            <div class="ml-2">
+					                <div class="form-check">
+					                    <label for="id_id_model_0_1" class="form-check-label">
+					                        <input type="radio" class="form-check-input" checked="checked" name="model" id="id_id_model_0_1" value="diary" >
+					                        diaries
+					                    </label>
+					                </div>
+					                <div class="form-check">
+					                    <label for="id_id_model_0_2" class="form-check-label">
+					                        <input type="radio" class="form-check-input" name="model" id="id_id_model_0_2" value="profile" >
+					                        Profiles
+					                        </label>
+					                </div>
+					            </div>
+					        </div>
+					            <button class="btn btn-body">
+					                <span class="oi" data-glyph="magnifying-glass" title="magnifying-glass" aria-hidden="true"></span>
+					            </button>
+					        </div>
+					    </div>
 					</form>
 					<div class="collapse navbar-collapse" id="TopNavabar">
 						<ul class="navbar-nav" style="margin-left: auto;">
