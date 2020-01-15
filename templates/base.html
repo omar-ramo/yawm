@@ -58,7 +58,7 @@
 					            </div>
 					        </div>
 					            <button class="btn btn-body">
-					                <span class="oi" data-glyph="magnifying-glass" title="magnifying-glass" aria-hidden="true"></span>
+					                <span class="oi" data-glyph="magnifying-glass" title="Search" aria-hidden="true"></span>
 					            </button>
 					        </div>
 					    </div>
@@ -67,16 +67,16 @@
 						<ul class="navbar-nav" style="margin-left: auto;">
 							{% if request.user.is_authenticated %}
 								<li class="nav-item ml-2">
-									<a class="nav-link" href="{% url 'diaries:diary_create' %}">Write a new diary <span class="oi" data-glyph="pencil" title="pencil" aria-hidden="true"></span></a>
+									<a class="nav-link" href="{% url 'diaries:diary_create' %}">Write a new diary <span class="oi" data-glyph="pencil" title="Write a new diary" aria-hidden="true"></span></a>
 								</li>
 								<li class="nav-item ml-2">
-									<a class="nav-link" href="{% url 'accounts:profile_list' %}">Interesting People <span class="oi" data-glyph="people" title="people" aria-hidden="true"></span></a>
+									<a class="nav-link" href="{% url 'accounts:profile_list' %}">Interesting People <span class="oi" data-glyph="people" title="Interesting People" aria-hidden="true"></span></a>
 								</li>
 								<li class="nav-item ml-2">
 									{% with notifications=request.user.notifications.all|slice:":7" %}
 									<div class="dropdown">
 										<button class="btn dropdown-toggle" data-toggle="dropdown">
-											<span class="oi" data-glyph="bell" title="bell" aria-hidden="true"></span>
+											<span class="oi" data-glyph="bell" title="Notifications" aria-hidden="true"></span>
 											{% if notifications %}
 												<span class="badge badge-info">{% notifications_unread %}</span>
 											{% endif %}
@@ -129,15 +129,15 @@
 										<div class="dropdown-menu">
 											<a href="{{ profile.get_absolute_url }}" class="dropdown-item">
 												My Profile ({{ request.user.username }}) 
-												<span class="oi" data-glyph="person" title="person" aria-hidden="true"></span>
+												<span class="oi" data-glyph="person" title="My Profile" aria-hidden="true"></span>
 											</a>	
 											<a href="{% url 'accounts:profile_update' request.user.username %}" class="dropdown-item">
 												Update Profile 
-												<span class="oi" data-glyph="pencil" title="pencil" aria-hidden="true"></span>
+												<span class="oi" data-glyph="pencil" title="Update profile" aria-hidden="true"></span>
 											</a>
 											<a href="{% url 'account_logout' %}" class="dropdown-item">
 												Logout 
-												<span class="oi" data-glyph="account-logout" title="account logout" aria-hidden="true"></span>
+												<span class="oi" data-glyph="account-logout" title="Logout" aria-hidden="true"></span>
 											</a>	
 										</div>
 										{% endwith %}
@@ -146,14 +146,12 @@
 							{% else %}
 								<li class="nav-item">
 									<a class="nav-link" href="{% url 'account_login' %}">
-										Login 
-										<span class="oi" data-glyph="account-login" title="account login" aria-hidden="true"></span>
+										Login
 									</a>
 								</li>
 								<li class="nav-item">
 									<a class="nav-link" href="{% url 'account_signup' %}">
-										Signup 
-										<span class="oi" data-glyph="browser" title="browser" aria-hidden="true"></span>
+										Signup
 									</a>
 								</li>
 							{% endif %}
@@ -165,9 +163,9 @@
 		<div class="row my-5">
 			<div class="col-12">
 				<ul class="nav justify-content-center">
-					<li class="nav-item"><a class="nav-link" href="{% url 'diaries:diary_list' %}">Recent <span class="oi" data-glyph="bolt" title="bolt" aria-hidden="true"></span></a></li>
-					<li class="nav-item"><a class="nav-link" href="{% url 'diaries:popular_diary_list' %}">Popular <span class="oi" data-glyph="fire" title="fire" aria-hidden="true"></span></span></a></li>
-					<li class="nav-item"><a class="nav-link" href="{% url 'diaries:discover_diary_list' %}">Discover <span class="oi" data-glyph="compass" title="compass" aria-hidden="true"></span></a></li>
+					<li class="nav-item"><a class="nav-link" href="{% url 'diaries:diary_list' %}">Recent <span class="oi" data-glyph="bolt" title="Diaries from my circle" aria-hidden="true"></span></a></li>
+					<li class="nav-item"><a class="nav-link" href="{% url 'diaries:popular_diary_list' %}">Popular <span class="oi" data-glyph="fire" title="Popular diaries" aria-hidden="true"></span></span></a></li>
+					<li class="nav-item"><a class="nav-link" href="{% url 'diaries:discover_diary_list' %}">Discover <span class="oi" data-glyph="compass" title="Newest diaries" aria-hidden="true"></span></a></li>
 					<li class="nav-item"><a class="nav-link disabled" href="#!">WeekBest <span class="oi" data-glyph="graph" title="graph" aria-hidden="true"></span></a></li>
 				</ul>
 			</div>
