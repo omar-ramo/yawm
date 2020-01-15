@@ -125,7 +125,7 @@
 								<li class="nav-item">
 									<div class="dropdown">
 										{% with profile=request.user.profile %}
-										<img src="{% thumbnail profile.image '50x50' crop='center' as img %}{{ img.url }}{% endthumbnail %}" class="img-fluid dropdown-toggle rounded-circle" data-toggle="dropdown">
+										<img src="{% thumbnail profile.image '50x50' crop='center' as img %}{{ img.url }}{% endthumbnail %}" class="img-fluid dropdown-toggle rounded-circle" data-toggle="dropdown" width="80%">
 										<div class="dropdown-menu">
 											<a href="{{ profile.get_absolute_url }}" class="dropdown-item">
 												My Profile ({{ request.user.username }}) 
