@@ -17,7 +17,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.contrib.auth.decorators import login_required
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.views.decorators.cache import never_cache
 import notifications.urls
 from ckeditor_uploader import views as ckeditor_uploader_views
@@ -45,6 +45,7 @@ urlpatterns = [
         ),
     ])),
     path('', include('diaries.urls', namespace='diaries')),
+    # re_path(r'^api/(?P<version>(v1|v2))/', include([
     path('api/v1/', include([
         path('diaries/', include('diaries.api.urls', namespace='diaries_api'))
     ])),

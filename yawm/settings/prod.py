@@ -10,6 +10,7 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '[::1]', '.herokuapp.com']
 
 MIDDLEWARE += 'whitenoise.middleware.WhiteNoiseMiddleware',
+MIDDLEWARE += 'core.middleware.UserBasedExceptionMiddleware',
 
 DATABASES = {
     'default': dj_database_url.config(

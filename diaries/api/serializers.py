@@ -14,9 +14,9 @@ class CommentSerializer(serializers.ModelSerializer):
 
 
 class DiaryListSerializer(serializers.ModelSerializer):
+    lookup_field = 'slug'
     author_name = serializers.ReadOnlyField(source='author.name')
     author_image = serializers.ReadOnlyField(source='author.image.url')
-    feeling = serializers.CharField(source='get_feeling_display')
     url = serializers.HyperlinkedIdentityField(
         view_name='diaries_api:diary_detail',
         lookup_url_kwarg='diary_slug',
@@ -36,7 +36,6 @@ class DiaryDetailSerializer(serializers.ModelSerializer):
     author_image = serializers.ReadOnlyField(source='author.image.url')
     comments = CommentSerializer(many=True, read_only=True)
     lookup_field = 'slug'
-    feeling = serializers.CharField(source='get_feeling_display')
     url = serializers.HyperlinkedIdentityField(
         view_name='diaries_api:diary_detail',
         lookup_url_kwarg='diary_slug',
