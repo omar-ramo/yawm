@@ -6,3 +6,4 @@ django-notifications-hq==1.5.0
 bleach==3.0.2
 sorl-thumbnail==12.5.0
 django-allauth==0.39.1
+djangorestframework==3.10.3
